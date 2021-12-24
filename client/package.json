@@ -4,14 +4,17 @@
   "description": "Web client for selling Ravencoin (Paypal)",
   "main": "index.js",
   "scripts": {
+    "start": "parcel index.html  --no-cache ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "Dick Henrik Larsson",
   "license": "ISC",
   "dependencies": {
+    "firebase": "^9.6.1",
     "parcel": "^2.0.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-firebaseui": "^6.0.0"
   }
 }
