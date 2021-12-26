@@ -1,4 +1,5 @@
 # ravenpal
+# DO NOT USE THIS CODE, NOT YET READY
 Sell Ravencoin (RVN) using Paypal
 
 
