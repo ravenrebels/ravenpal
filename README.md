@@ -1,4 +1,9 @@
 # ravenpal
+
+This a single purpose application.
+Use Paypal as payment rails when selling Ravecoin digital assets/goods (RVN/ASSETS/TOKENS/NFTs).
+
+
 # DO NOT USE THIS CODE, NOT YET READY
 Sell Ravencoin (RVN) using Paypal
 
