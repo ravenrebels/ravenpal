@@ -5,8 +5,15 @@ Sell Ravencoin (RVN) using Paypal
 
 Flow
 
-- user interacts sign in to the web application
-- user continue to buy RVN
-- web client posts to Google Firebase
+- User visits web application
+- User sign in using Google
+- User specify her Ravencoin address
+- Server validates Ravencoin address
 
-- 
+After Ravencoin address has been validated.
+
+- When user clicks buy, then web client sent buy-intent-request to Firebase 
+- Server subscribes to Firebase and reacts on buy-intent-request.
+- Server post payment request to Paypal.
+- Server upates Firebase with response from Paypal.
+

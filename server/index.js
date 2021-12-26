@@ -1,30 +1,69 @@
+const admin = require("firebase-admin");
 const paypal = require("paypal-rest-sdk");
 const paypalSettings = require("./paypalsettings.json");
 
+const fs = require("fs");
+
+const serviceAccount = require("./firebaseServiceAccount.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL:
+    "https://ravencoin--staging-default-rtdb.europe-west1.firebasedatabase.app",
+});
+
+async function work() {
+  const db = admin.database();
+
+  //Get all orders
+  const ref = db.ref("/orders");
+  ref.on("value", function (snapshot) {
+    const data = snapshot.val();
+
+    //Data structure orders > userid > order
+    const users = Object.keys(data);
+
+    for (const user of users) {
+      const orders = data[users];
+      const orderKeys = Object.keys(orders);
+
+      for (const key of orderKeys) {
+        if (order.processed) {
+          continue;
+        }
+        const order = orders[key];
+
+        const orderRef = db.ref("/orders/" + user + "/" + key);
+        pay(orderRef);
+      }
+    }
+  });
+}
+work();
 paypal.configure({
   mode: "sandbox", //sandbox or live
   client_id: paypalSettings.client_id,
   client_secret: paypalSettings.client_secret,
 });
 
-function pay() {
+function pay(firebaseOrderRef) {
   const create_payment_json = {
     intent: "sale",
     payer: {
       payment_method: "paypal",
     },
     redirect_urls: {
-      return_url: "http://localhost:3000/success",
-      cancel_url: "http://localhost:3000/cancel",
+      return_url: paypalSettings.return_url,
+      cancel_url: paypalSettings.cancel_url,
     },
     transactions: [
       {
         item_list: {
           items: [
             {
-              name: "$100 worth of RVN",
-              sku: "001",
-              price: "100.00",
+              name: "$10 worth of RVN",
+              sku: "" + Math.random(),
+              price: "10.00",
               currency: "USD",
               quantity: 1,
             },
@@ -32,54 +71,23 @@ function pay() {
         },
         amount: {
           currency: "USD",
-          total: "100.00",
+          total: "10.00",
         },
-        description: "100$ worth of Ravencoin",
+        description: "10$ worth of Ravencoin",
       },
     ],
   };
 
   paypal.payment.create(create_payment_json, function (error, payment) {
     if (error) {
-      throw error;
+      firebaseOrderRef.update({ error: true });
     } else {
+      firebaseOrderRef.set({ payment });
       for (let i = 0; i < payment.links.length; i++) {
         if (payment.links[i].rel === "approval_url") {
-          res.redirect(payment.links[i].href);
+          firebaseOrderRef.update({ redirectURL: payment.links[i].href });
         }
       }
     }
   });
 }
-
-app.get("/success", (req, res) => {
-  console.log("SUCCESS");
-  const payerId = req.query.PayerID;
-  const paymentId = req.query.paymentId;
-
-  const execute_payment_json = {
-    payer_id: payerId,
-    transactions: [
-      {
-        amount: {
-          currency: "USD",
-          total: "25.00",
-        },
-      },
-    ],
-  };
-
-  paypal.payment.execute(
-    paymentId,
-    execute_payment_json,
-    function (error, payment) {
-      if (error) {
-        console.log(error.response);
-        throw error;
-      } else {
-        console.log(JSON.stringify(payment));
-        res.send("Success");
-      }
-    }
-  );
-});
