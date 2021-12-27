@@ -5,8 +5,7 @@ body {
   background-size: auto;
   background-color: #000;
   background-image: linear-gradient(147deg, #923cb5 0%, #000000 74%);
-  color: #fff;
-  display: flex;
+  color: #fff; 
   font-family: "Quicksand", sans-serif;
   font-size: 1.5rem;
   font-weight: 300;

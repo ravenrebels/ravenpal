@@ -9,7 +9,6 @@ import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import { App } from "./App";
 
 import firebaseConfig from "../firebaseConfig.json";
-import settings from "../settings.json";
 
 export type User = firebase.User;
 const app = firebase.initializeApp(firebaseConfig);

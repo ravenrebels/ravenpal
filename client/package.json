@@ -4,7 +4,8 @@
   "description": "Web client for selling Ravencoin (Paypal)",
   "main": "index.js",
   "scripts": {
-    "start": "parcel index.html  --no-cache ",
+    "start": "parcel index.html success.html  --no-cache ",
+    "build": "parcel build index.html success.html --no-cache",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

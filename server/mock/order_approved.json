@@ -1,0 +1,124 @@
+{
+  "id": "PAYID-MHEEJZY0N463546GJ050324H",
+  "intent": "sale",
+  "state": "approved",
+  "cart": "92B681804D511752T",
+  "payer": {
+    "payment_method": "paypal",
+    "status": "VERIFIED",
+    "payer_info": {
+      "email": "sb-8q52z5910909@business.example.com",
+      "first_name": "John",
+      "last_name": "Doe",
+      "payer_id": "GT7DJFQJ2H74W",
+      "shipping_address": {
+        "recipient_name": "John Doe",
+        "line1": "Nybrogatan 38",
+        "city": "Stockholm",
+        "state": "Sverige",
+        "postal_code": "11440",
+        "country_code": "SE"
+      },
+      "country_code": "SE",
+      "business_name": "Test Store"
+    }
+  },
+  "transactions": [
+    {
+      "amount": {
+        "total": "10.00",
+        "currency": "USD",
+        "details": {
+          "subtotal": "10.00",
+          "shipping": "0.00",
+          "insurance": "0.00",
+          "handling_fee": "0.00",
+          "shipping_discount": "0.00",
+          "discount": "0.00"
+        }
+      },
+      "payee": {
+        "merchant_id": "66C23XRJ8A2UW",
+        "email": "sb-jk3fu5765962@personal.example.com"
+      },
+      "description": "10$ worth of Ravencoin",
+      "item_list": {
+        "items": [
+          {
+            "name": "$10 worth of RVN",
+            "sku": "0.4156749167046898",
+            "price": "10.00",
+            "currency": "USD",
+            "tax": "0.00",
+            "quantity": 1
+          }
+        ],
+        "shipping_address": {
+          "recipient_name": "John Doe",
+          "line1": "Nybrogatan 38",
+          "city": "Stockholm",
+          "state": "Sverige",
+          "postal_code": "11440",
+          "country_code": "SE"
+        }
+      },
+      "related_resources": [
+        {
+          "sale": {
+            "id": "89231485PR295172P",
+            "state": "completed",
+            "amount": {
+              "total": "10.00",
+              "currency": "USD",
+              "details": {
+                "subtotal": "10.00",
+                "shipping": "0.00",
+                "insurance": "0.00",
+                "handling_fee": "0.00",
+                "shipping_discount": "0.00",
+                "discount": "0.00"
+              }
+            },
+            "payment_mode": "INSTANT_TRANSFER",
+            "protection_eligibility": "ELIGIBLE",
+            "protection_eligibility_type": "ITEM_NOT_RECEIVED_ELIGIBLE,UNAUTHORIZED_PAYMENT_ELIGIBLE",
+            "transaction_fee": { "value": "0.64", "currency": "USD" },
+            "receivable_amount": { "value": "10.00", "currency": "USD" },
+            "exchange_rate": "0.105314865668891",
+            "parent_payment": "PAYID-MHEEJZY0N463546GJ050324H",
+            "create_time": "2021-12-26T10:37:14Z",
+            "update_time": "2021-12-26T10:37:14Z",
+            "links": [
+              {
+                "href": "https://api.sandbox.paypal.com/v1/payments/sale/89231485PR295172P",
+                "rel": "self",
+                "method": "GET"
+              },
+              {
+                "href": "https://api.sandbox.paypal.com/v1/payments/sale/89231485PR295172P/refund",
+                "rel": "refund",
+                "method": "POST"
+              },
+              {
+                "href": "https://api.sandbox.paypal.com/v1/payments/payment/PAYID-MHEEJZY0N463546GJ050324H",
+                "rel": "parent_payment",
+                "method": "GET"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "failed_transactions": [],
+  "create_time": "2021-12-26T10:33:11Z",
+  "update_time": "2021-12-26T10:37:14Z",
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v1/payments/payment/PAYID-MHEEJZY0N463546GJ050324H",
+      "rel": "self",
+      "method": "GET"
+    }
+  ],
+  "httpStatusCode": 200
+}
