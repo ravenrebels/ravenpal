@@ -16,64 +16,25 @@ export function App({ firebase, logOut, user }: IProps) {
 
   React.useEffect(() => {
     const ref = firebase.database().ref("/orders/" + user.uid);
-    ref.on("value", (snapshot) => {
+    const listener = ref.on("value", (snapshot) => {
       setOrders(snapshot.val());
     });
-  }, []);
+    const cleanup = () => {
+      ref.off("value", listener);
+    };
 
-  React.useEffect(() => {
-    //Check if we have redirect_url in URL
-    const searchParams = new URLSearchParams(window.location.search);
-
-    //Example URL
-    //http://localhost:1234/index.html?return_url=true&paymentId=PAYID-MHDRBNY817693342L823750P&token=EC-78J78014HW877442K&PayerID=GT7DJFQJ2H74W
-
-    if (searchParams.get("return_url")) {
-      const paymentId = searchParams.get("paymentId");
-      const token = searchParams.get("token");
-      const PayerID = searchParams.get("PayerID");
-
-      //Get the users orders and locate paymentId
-      const ref = firebase.database().ref("/orders/" + user.uid);
-
-      ref.once("value", (snapshot) => {
-        const data = snapshot.val();
-
-        if (!data) {
-          return;
-        }
-
-        const keys = Object.keys(data);
-        for (const key of keys) {
-          const order = data[key];
-          if (!order.payment) {
-            continue;
-          }
-          if (order.payment.id === paymentId) {
-            const orderRef = firebase
-              .database()
-              .ref("/orders/" + user.uid + "/" + key);
-
-            const toSend = {
-              metadata: {
-                paymentId,
-                token,
-                PayerID,
-              },
-            };
-
-            const promise = orderRef.update(toSend);
-
-            promise.then(reloadPageWithoutQueryString);
-          }
-        }
-      });
-    } else {
-    }
+    return cleanup;
   }, []);
 
   //Orders sorted by date
   const ordersArray = ordersByDate(orders);
+
+  //Does any order have state "created"?
+  ordersArray.map(function (order) {
+    if (order.payment && order.payment.state === "created") {
+     // window.location = order.redirectURL;
+    }
+  });
 
   return (
     <div className="card">
@@ -86,14 +47,14 @@ export function App({ firebase, logOut, user }: IProps) {
         className="button-27"
         onClick={() => {
           const firebaseOrderRef = postBuyOrder(firebase, user);
+          //Get reference to /order/userid/key, can we use parent().parent()?
+          const key = firebaseOrderRef.key;
 
           //Subscribe to changes in Firebase, unregister on getting redirect URL
           const listener = firebaseOrderRef.on("value", function (snapshot) {
             const data = snapshot.val();
 
             if (data.redirectURL) {
-              //Unregister listener
-              firebaseOrderRef.off("value", listener);
               window.location = data.redirectURL;
             }
           });
@@ -125,7 +86,7 @@ const sortOrdersByDate = function (a, b) {
   return 1;
 };
 function postBuyOrder(firebase, user) {
-  const userRef = firebase.database().ref("/orders/" + user.uid);
+  const userRef = firebase.database().ref("/order-intents/" + user.uid);
   const orderRef = userRef.push();
   orderRef.set({
     ravencoinAddress: "RFb2XBw4WC1rZYave93DorxLBym3piGVLo",

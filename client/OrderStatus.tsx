@@ -8,7 +8,7 @@ export function OrderStatus({ order }) {
   if (!order.payment) {
     return null;
   }
-
+  const json = JSON.stringify(order, null, 4);
   return (
     <div
       key={order.id}
@@ -19,9 +19,13 @@ export function OrderStatus({ order }) {
         borderRadius: "10px",
       }}
     >
-      Created: {order.payment.create_time}
+      Order date: {new Date(order.payment.create_time).toLocaleString()}
       <br />
       State: {order.payment.state}
+      <div>
+        <strong>Meta data</strong>
+        {JSON.stringify(order.metadata)}
+      </div>
       <br />
       id: {order.payment.id}
       <br />
@@ -29,6 +33,7 @@ export function OrderStatus({ order }) {
       {order.payment.transactions[0].amount.total}
       <br />
       {order.payment.transactions[0].description}
+      <a href={order.redirectURL}>Pay</a>
     </div>
   );
 }

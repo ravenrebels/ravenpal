@@ -63,7 +63,7 @@ function useUser(): User {
   const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
-    firebase.auth().onAuthStateChanged(async function (user: User) {
+    firebase.auth().onAuthStateChanged(function (user: User) {
       setUser(user);
       //Update profile at firebase
       const profile = user.providerData[0];

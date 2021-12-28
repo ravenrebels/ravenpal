@@ -52,5 +52,5 @@ function pay(firebaseOrderRef, ravencoinAddress) {
       }
     }
   });
-} 
+}
 module.exports = pay;
