@@ -65,7 +65,8 @@ export function App({ firebase, logOut, user }: IProps) {
       <button className="button-27 sign-out-button" onClick={logOut}>
         Sign out
       </button>
-      <ul>
+      <h1>My order history</h1>
+      <ul className="order-status">
         {ordersArray.map(function (order) {
           return <OrderStatus order={order} />;
         })}

@@ -2,6 +2,7 @@ const admin = require("firebase-admin");
 
 const processOrderIntents = require("./processOrderIntents");
 const processOrders = require("./processOrders");
+const executeOrders = require("./executeOrders");
 
 //SETUP FIREBASE
 const serviceAccount = require("./firebaseServiceAccount.json");
@@ -15,3 +16,5 @@ admin.initializeApp({
 processOrderIntents(admin);
 
 processOrders(admin);
+
+executeOrders(admin);

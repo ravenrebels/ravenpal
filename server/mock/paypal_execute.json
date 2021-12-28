@@ -1,8 +1,8 @@
 {
-  "id": "PAYID-MHDR5OY98P11371MM975770E",
+  "id": "PAYID-MHFRPZI5UU02387NH242344W",
   "intent": "sale",
   "state": "approved",
-  "cart": "0LF164919T174052L",
+  "cart": "3FH07388WP3541236",
   "payer": {
     "payment_method": "paypal",
     "status": "VERIFIED",
@@ -41,12 +41,12 @@
         "merchant_id": "66C23XRJ8A2UW",
         "email": "sb-jk3fu5765962@personal.example.com"
       },
-      "description": "10$ worth of Ravencoin",
+      "description": "10$ worth of Ravencoin to RFb2XBw4WC1rZYave93DorxLBym3piGVLo",
       "item_list": {
         "items": [
           {
-            "name": "$10 worth of RVN",
-            "sku": "0.7433881525026138",
+            "name": "$10 worth of RVN: RFb2XBw4WC1rZYave93DorxLBym3piGVLo",
+            "sku": "RFb2XBw4WC1rZYave93DorxLBym3piGVLo",
             "price": "10.00",
             "currency": "USD",
             "tax": "0.00",
@@ -65,7 +65,7 @@
       "related_resources": [
         {
           "sale": {
-            "id": "4WL360635F6874735",
+            "id": "5ST47119JG3981031",
             "state": "completed",
             "amount": {
               "total": "10.00",
@@ -85,22 +85,22 @@
             "transaction_fee": { "value": "0.64", "currency": "USD" },
             "receivable_amount": { "value": "10.00", "currency": "USD" },
             "exchange_rate": "0.105314865668891",
-            "parent_payment": "PAYID-MHDR5OY98P11371MM975770E",
-            "create_time": "2021-12-25T13:44:06Z",
-            "update_time": "2021-12-25T13:44:06Z",
+            "parent_payment": "PAYID-MHFRPZI5UU02387NH242344W",
+            "create_time": "2021-12-28T14:26:59Z",
+            "update_time": "2021-12-28T14:26:59Z",
             "links": [
               {
-                "href": "https://api.sandbox.paypal.com/v1/payments/sale/4WL360635F6874735",
+                "href": "https://api.sandbox.paypal.com/v1/payments/sale/5ST47119JG3981031",
                 "rel": "self",
                 "method": "GET"
               },
               {
-                "href": "https://api.sandbox.paypal.com/v1/payments/sale/4WL360635F6874735/refund",
+                "href": "https://api.sandbox.paypal.com/v1/payments/sale/5ST47119JG3981031/refund",
                 "rel": "refund",
                 "method": "POST"
               },
               {
-                "href": "https://api.sandbox.paypal.com/v1/payments/payment/PAYID-MHDR5OY98P11371MM975770E",
+                "href": "https://api.sandbox.paypal.com/v1/payments/payment/PAYID-MHFRPZI5UU02387NH242344W",
                 "rel": "parent_payment",
                 "method": "GET"
               }
@@ -111,11 +111,11 @@
     }
   ],
   "failed_transactions": [],
-  "create_time": "2021-12-25T13:38:03Z",
-  "update_time": "2021-12-25T13:44:06Z",
+  "create_time": "2021-12-28T13:57:57Z",
+  "update_time": "2021-12-28T14:26:59Z",
   "links": [
     {
-      "href": "https://api.sandbox.paypal.com/v1/payments/payment/PAYID-MHDR5OY98P11371MM975770E",
+      "href": "https://api.sandbox.paypal.com/v1/payments/payment/PAYID-MHFRPZI5UU02387NH242344W",
       "rel": "self",
       "method": "GET"
     }

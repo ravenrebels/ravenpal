@@ -65,15 +65,17 @@ function Success() {
           promise.then(() => {
             //Redirect the user back after 1 seconds
             setTimeout(() => {
-            console.info("Should redirect to start page");
-              //   window.location.href = "index.html";
+              console.info("Should redirect to start page");
+              window.location.href = "index.html";
             }, 1000);
           });
         }
       }
     });
   }
-  return <div className="card">Success......</div>;
+  return <div className="card">
+    Success...... 
+    </div>;
 }
 
 function useUser(): User {
