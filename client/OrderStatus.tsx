@@ -11,18 +11,18 @@ export function OrderStatus({ order }) {
   const json = JSON.stringify(order, null, 4);
   console.log(order);
 
-  let amount = "";
-  let currency = "";
-  let description = "";
-  let pay = "";
-  let state = "";
+  let amount = null;
+  let currency = null;
+  let description = null;
+  let date = null;
+
+  let headline = order.id;
+  let id = null;
+
+  let pay = null;
+  let state = null;
+
   if (order.payment && order.payment.transactions) {
-    description = (
-      <LabeledOutputField
-        label="Description"
-        value={order.payment.transactions[0].description}
-      />
-    );
     amount = (
       <LabeledOutputField
         label="Currency"
@@ -36,22 +36,29 @@ export function OrderStatus({ order }) {
         value={order.payment.transactions[0].amount.total}
       />
     );
+    description = (
+      <LabeledOutputField
+        label="Description"
+        value={order.payment.transactions[0].description}
+      />
+    );
+    id = <LabeledOutputField label={"id"} value={order.payment.id} />;
 
     state = (
       <LabeledOutputField label="State/Status" value={order.payment.state} />
     );
 
-    pay = order.payment.state === "created" && (
-      <div>
-        <a href={order.redirectURL}>Pay</a>
-      </div>
-    );
-  }
+    headline = new Date(order.payment.create_time).toLocaleString();
 
-  let id = "";
-  if (order.payment) {
-    id = <LabeledOutputField label={"id"} value={order.payment.id} />;
+    if (order.payment.state === "created") {
+      pay = (
+        <div>
+          <a href={order.redirectURL}>Pay</a>
+        </div>
+      );
+    }
   }
+  console.log("order id", order.id);
   return (
     <li
       className="order-status"
@@ -63,9 +70,7 @@ export function OrderStatus({ order }) {
         borderRadius: "10px",
       }}
     >
-      <h3 className="order-status__headline">
-        {new Date(order.payment.create_time).toLocaleString()}
-      </h3>
+      <h3 className="order-status__headline">{headline}</h3>
       {id}
       {state}
       {currency}
