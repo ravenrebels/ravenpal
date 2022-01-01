@@ -3,12 +3,22 @@ import { Instructions } from "./Instructions";
 import { User } from "@firebase/auth-types";
 import { OrderStatus } from "./OrderStatus";
 
+import Buy from "./Buy";
+
 interface IProps {
   firebase: any;
   logOut: any;
   user: User;
 }
+
+enum Routes {
+  HOME,
+  BUY,
+  SUCCESS,
+  CANCEL,
+}
 export function App({ firebase, logOut, user }: IProps) {
+  const [route, setRoute] = React.useState(Routes.HOME);
   const dollarAmountPay = 60;
   const dollarAmountGet = 57;
 
@@ -29,10 +39,16 @@ export function App({ firebase, logOut, user }: IProps) {
   //Orders sorted by date
   const ordersArray = ordersByDate(orders);
 
+  if (window.location.href.indexOf("cancel=true&token=") > -1) {
+    return (
+      <Cancel firebase={firebase} orders={ordersArray} user={user}></Cancel>
+    );
+  }
+
   //Does any order have state "created"?
   ordersArray.map(function (order) {
     if (order.payment && order.payment.state === "created") {
-      // window.location = order.redirectURL;
+      //   window.location = order.redirectURL;
     }
   });
 
@@ -46,7 +62,7 @@ export function App({ firebase, logOut, user }: IProps) {
       <button
         className="button-27"
         onClick={() => {
-          const firebaseOrderRef = postBuyOrder(firebase, user);
+          const firebaseOrderRef = submitBuyOrder(firebase, user);
           //Get reference to /order/userid/key, can we use parent().parent()?
           const key = firebaseOrderRef.key;
 
@@ -88,7 +104,7 @@ const sortOrdersByDate = function (a, b) {
   }
   return 1;
 };
-function postBuyOrder(firebase, user) {
+function submitBuyOrder(firebase, user) {
   const userRef = firebase.database().ref("/order-intents/" + user.uid);
   const orderRef = userRef.push();
   orderRef.set({
@@ -119,4 +135,37 @@ function ordersByDate(orders) {
     ordersArray.sort(sortOrdersByDate);
   }
   return ordersArray;
+}
+
+function Cancel({ firebase, orders, user }) {
+  if (!orders) {
+    return null;
+  }
+  //EC-6A4185222B789550X
+  let searchParams = new URLSearchParams(window.location.href);
+  const token = searchParams.get("token");
+
+  //Iterate over order, find the order that contains the token value in the redirectURL field
+  if (token) {
+    orders.map((order) => {
+      const URL = order.redirectURL;
+      if (URL.indexOf("token=" + token) > -1) {
+        const promise = firebase
+          .database()
+          .ref("/order-intents/" + user.uid + "/" + order.id)
+          .update({
+            canceledByUser: true,
+          });
+        promise.then((d) => {
+          //Successfully canceled order, redirect to start page
+          alert("Order canceled");
+          window.location.href = "/";
+        });
+      }
+    });
+  }
+  return <div>User has canceled something</div>;
+  FileSystemDirectoryReader;
+
+  return <div>Cancel</div>;
 }

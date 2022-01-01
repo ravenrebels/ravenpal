@@ -35,22 +35,8 @@ async function work(firebase) {
     //  ref.on("child_changed", eventListener);
   };
 
-  //One seconds debounce, multiple updates can come at onces
+  //One second debounce, multiple updates can come at once
   const debouncedEventListener = debounce(eventListener, 1000);
   ref.on("value", debouncedEventListener);
 }
 module.exports = work;
-
-/*
-
-
-        orderRef.once("value", (snap) => {
-          if (snap.exists() === false) {
-            pay(orderIntentRef, orderRef, order.ravencoinAddress);
-          } else {
-            console.log("order", key, "already exists");
-          }
-        });
-      }
-
-      */

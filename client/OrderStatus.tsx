@@ -8,6 +8,10 @@ export function OrderStatus({ order }) {
   if (!order.payment) {
     return null;
   }
+
+  if(order.canceledByUser){
+    return null;
+  }
   const json = JSON.stringify(order, null, 4);
   console.log(order);
 
@@ -50,7 +54,9 @@ export function OrderStatus({ order }) {
 
     headline = new Date(order.payment.create_time).toLocaleString();
 
-    if (order.payment.state === "created") {
+    if (order.canceledByUser === true) {
+      pay = <h2>This order is canceled</h2>;
+    } else if (order.payment.state === "created") {
       pay = (
         <div>
           <a href={order.redirectURL}>Pay</a>

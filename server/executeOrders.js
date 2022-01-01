@@ -15,6 +15,9 @@ function executeOrders(firebase) {
   ref.on("value", (snapshot) => {
     const data = snapshot.val();
 
+    if(data === null){
+      return;
+    }
     const userIds = Object.keys(data);
     for (const userId of userIds) {
       console.log("process orders, user", userId);
