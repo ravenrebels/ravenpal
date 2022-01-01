@@ -2,6 +2,7 @@
 paypalsettings.json
 firebaseConfig.json
 firebaseServiceAccount.json
+server/backup
 .parcel-cache
 # Logs
 logs

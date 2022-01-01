@@ -25,6 +25,7 @@ function executeOrders(firebase) {
         const order = orders[orderKey];
 
         if (shouldExecuteOrder(order) === true) {
+          console.log("Execute order, should process", order);
           const firebaseRef = db.ref("/orders/" + userId + "/" + orderKey);
           executeOrder(firebaseRef, paypal, order);
         }
@@ -51,10 +52,11 @@ function executeOrder(firebaseRef, paypal, order) {
 
   paypal.payment.execute(
     paymentId,
+
     execute_payment_json,
     function (error, payment) {
       if (error) {
-        throw error;
+        console.log("Error processing payment id", paymentId, error);
       } else {
         firebaseRef.update({
           payment: payment,
@@ -79,10 +81,11 @@ function shouldExecuteOrder(order) {
     return false;
   }
 
-  if (!order.payment.state === "created") {
-    return false;
+  //Only execute orders with state set to created
+  if (order.payment.state === "created") {
+    return true;
   }
-  return true;
+  return false;
 }
 
 module.exports = executeOrders;

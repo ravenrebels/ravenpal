@@ -2,6 +2,7 @@ const paypal = require("paypal-rest-sdk");
 const paypalSettings = require("./paypalsettings.json");
 const pay = require("./pay");
 const fs = require("fs");
+const debounce = require("lodash.debounce");
 
 //SETUP PAYPAL
 paypal.configure({
@@ -14,7 +15,7 @@ function processOrders(firebase) {
   const db = firebase.database();
   const ref = db.ref("/orders");
 
-  ref.on("value", (snapshot) => {
+  const eventListener = (snapshot) => {
     const data = snapshot.val();
 
     if (!data) {
@@ -37,7 +38,10 @@ function processOrders(firebase) {
         }
       }
     }
-  });
+  };
+
+  const debouncedEventListener = debounce(eventListener, 1000);
+  ref.on("value", debouncedEventListener);
 }
 
 function backupOrders(data) {

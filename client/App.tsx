@@ -32,7 +32,7 @@ export function App({ firebase, logOut, user }: IProps) {
   //Does any order have state "created"?
   ordersArray.map(function (order) {
     if (order.payment && order.payment.state === "created") {
-     // window.location = order.redirectURL;
+      // window.location = order.redirectURL;
     }
   });
 
@@ -53,7 +53,9 @@ export function App({ firebase, logOut, user }: IProps) {
           //Subscribe to changes in Firebase, unregister on getting redirect URL
           const listener = firebaseOrderRef.on("value", function (snapshot) {
             const data = snapshot.val();
-
+            if (!data) {
+              return;
+            }
             if (data.redirectURL) {
               window.location = data.redirectURL;
             }

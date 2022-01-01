@@ -1,5 +1,5 @@
 const pay = require("./pay");
-
+const debounce = require("lodash.debounce");
 async function work(firebase) {
   const db = firebase.database();
 
@@ -34,7 +34,10 @@ async function work(firebase) {
     // ref.on("child_added", eventListener);
     //  ref.on("child_changed", eventListener);
   };
-  ref.on("value", eventListener);
+
+  //One seconds debounce, multiple updates can come at onces
+  const debouncedEventListener = debounce(eventListener, 1000);
+  ref.on("value", debouncedEventListener);
 }
 module.exports = work;
 
