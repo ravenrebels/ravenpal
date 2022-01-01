@@ -47,7 +47,7 @@ function Success() {
         }
         if (order.payment.id === paymentId) {
           console.info("Found payment", paymentId);
-          const orderRef = firebase
+          const orderIntentRef = firebase
             .database()
             .ref("/order-intents/" + user.uid + "/" + key);
 
@@ -59,7 +59,7 @@ function Success() {
             },
           };
 
-          const promise = orderRef.update(toSend);
+          const promise = orderIntentRef.update(toSend);
           console.info("will send", toSend);
 
           promise.then(() => {

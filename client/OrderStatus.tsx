@@ -9,7 +9,7 @@ export function OrderStatus({ order }) {
     return null;
   }
 
-  if(order.canceledByUser){
+  if (order.canceledByUser) {
     return null;
   }
   const json = JSON.stringify(order, null, 4);
@@ -55,7 +55,7 @@ export function OrderStatus({ order }) {
     headline = new Date(order.payment.create_time).toLocaleString();
 
     if (order.canceledByUser === true) {
-      pay = <h2>This order is canceled</h2>;
+      pay = <h2>You have canceled this order</h2>;
     } else if (order.payment.state === "created") {
       pay = (
         <div>
@@ -64,7 +64,6 @@ export function OrderStatus({ order }) {
       );
     }
   }
-  console.log("order id", order.id);
   return (
     <li
       className="order-status"
@@ -77,6 +76,7 @@ export function OrderStatus({ order }) {
       }}
     >
       <h3 className="order-status__headline">{headline}</h3>
+      {!order.ravencoinTransactionId && <h3>Digital goods not sent to you yet!</h3>}
       {id}
       {state}
       {currency}

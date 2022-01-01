@@ -3,7 +3,7 @@ const paypalSettings = require("./paypalsettings.json");
 
 //SETUP PAYPAL
 paypal.configure({
-  mode: "sandbox", //sandbox or live
+  mode: paypalSettings.mode, //sandbox or live
   client_id: paypalSettings.client_id,
   client_secret: paypalSettings.client_secret,
 });

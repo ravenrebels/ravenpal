@@ -1,12 +1,4 @@
-const paypal = require("paypal-rest-sdk");
-const paypalSettings = require("./paypalsettings.json");
-
-//SETUP PAYPAL
-paypal.configure({
-  mode: "sandbox", //sandbox or live
-  client_id: paypalSettings.client_id,
-  client_secret: paypalSettings.client_secret,
-});
+const paypal = require("./paypal");
 
 function executeOrders(firebase) {
   const db = firebase.database();
@@ -15,7 +7,7 @@ function executeOrders(firebase) {
   ref.on("value", (snapshot) => {
     const data = snapshot.val();
 
-    if(data === null){
+    if (data === null) {
       return;
     }
     const userIds = Object.keys(data);

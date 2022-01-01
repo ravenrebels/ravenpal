@@ -15,15 +15,28 @@ async function work(firebase) {
     const users = Object.keys(data);
 
     for (const user of users) {
-      const orders = data[user];
-      const orderKeys = Object.keys(orders);
+      const orderIntents = data[user];
+      const orderIntentKeys = Object.keys(orderIntents);
 
-      for (const key of orderKeys) {
-        const order = orders[key];
+      for (const key of orderIntentKeys) {
+        const orderIntent = orderIntents[key];
+
+        //Cherry pick white-listed properties
 
         //convert the order-intent to an order, users do not have write access to /order
         const orderRef = db.ref("/orders/" + user + "/" + key);
-        orderRef.update(order);
+
+        const toSave = {};
+        const whiteList = ["metadata", "ravencoinaddress", "userTime"];
+
+        whiteList.map(function (prop) {
+          const value = orderInten[prop];
+          if (value) {
+            toSave[prop] = value;
+          }
+        });
+
+        orderRef.update(toSave);
 
         //Delete the intent
         const intentRef = db.ref("/order-intents/" + user + "/" + key);

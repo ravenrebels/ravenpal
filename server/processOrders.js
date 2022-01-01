@@ -1,15 +1,7 @@
-const paypal = require("paypal-rest-sdk");
-const paypalSettings = require("./paypalsettings.json");
+const paypal = require("./paypal");
 const pay = require("./pay");
 const fs = require("fs");
 const debounce = require("lodash.debounce");
-
-//SETUP PAYPAL
-paypal.configure({
-  mode: "sandbox", //sandbox or live
-  client_id: paypalSettings.client_id,
-  client_secret: paypalSettings.client_secret,
-});
 
 function processOrders(firebase) {
   const db = firebase.database();
