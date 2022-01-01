@@ -8,4 +8,4 @@ paypal.configure({
   client_secret: paypalSettings.client_secret,
 });
 
-exports = paypal;
+module.exports = paypal;

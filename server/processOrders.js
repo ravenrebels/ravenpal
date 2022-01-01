@@ -24,6 +24,9 @@ function processOrders(firebase) {
       for (const orderKey of orderKeys) {
         const order = orders[orderKey];
 
+        if(order.error){
+          continue; //Skip orders with errors
+        }
         if (!order.payment) {
           const orderRef = db.ref("/orders/" + userId + "/" + orderKey);
           pay(orderRef, order.ravencoinAddress);
@@ -41,7 +44,7 @@ function backupOrders(data) {
   //Make sure that the folder backup/orders exists
   fs.mkdirSync("./backup/orders", { recursive: true });
 
-  const json = JSON.stringify(data, null, 4);
+  const json = JSON.stringify(data);
 
   fs.writeFileSync("./backup/orders/" + Date.now() + ".json", json);
 }

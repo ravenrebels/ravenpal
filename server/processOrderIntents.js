@@ -30,7 +30,7 @@ async function work(firebase) {
         const whiteList = ["metadata", "ravencoinaddress", "userTime"];
 
         whiteList.map(function (prop) {
-          const value = orderInten[prop];
+          const value = orderIntent[prop];
           if (value) {
             toSave[prop] = value;
           }
