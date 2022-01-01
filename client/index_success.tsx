@@ -9,6 +9,16 @@ import firebaseConfig from "../firebaseConfig.json";
 
 export type User = firebase.User;
 const app = firebase.initializeApp(firebaseConfig);
+
+/*
+  This "page" has one single purpose.
+  When the user has paid the order on Paypal.
+  Paypal redirects the user back to this page.
+  Papal has decorated the success url (this page) with extra parameters with meta-data about the payment.
+
+  Grab the meta data, update the order in firebase
+*/
+
 function Success() {
   const user = useUser();
   //Check if we have redirect_url in URL
@@ -60,7 +70,6 @@ function Success() {
           };
 
           const promise = orderIntentRef.update(toSend);
-          console.info("will send", toSend);
 
           promise.then(() => {
             //Redirect the user back after 1 seconds
@@ -73,9 +82,7 @@ function Success() {
       }
     });
   }
-  return <div className="card">
-    Success...... 
-    </div>;
+  return <div className="card">Success......</div>;
 }
 
 function useUser(): User {
@@ -84,13 +91,6 @@ function useUser(): User {
   React.useEffect(() => {
     firebase.auth().onAuthStateChanged(async function (user: User) {
       setUser(user);
-      //Update profile at firebase
-      const profile = user.providerData[0];
-      profile["lastLogin"] = new Date().toISOString();
-      const promise = firebase
-        .database()
-        .ref("/users/" + user.uid)
-        .set(profile);
     });
   }, []);
   return user;
