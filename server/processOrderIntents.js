@@ -18,16 +18,15 @@ async function work(firebase) {
       const orderIntents = data[user];
       const orderIntentKeys = Object.keys(orderIntents);
 
-      for (const key of orderIntentKeys) {
-        const orderIntent = orderIntents[key];
-
-        //Cherry pick white-listed properties
-
-        //convert the order-intent to an order, users do not have write access to /order
-        const orderRef = db.ref("/orders/" + user + "/" + key);
+      for (const orderIntentKey of orderIntentKeys) {
+        const orderIntent = orderIntents[orderIntentKey];
+        console.log("Processing order intent", orderIntent, orderIntentKey);
+        //convert the order-intent to an order, users do not have write access to /orders
+        const orderRef = db.ref("/orders/" + user + "/" + orderIntentKey);
 
         const toSave = {};
-        const whiteList = ["metadata", "ravencoinaddress", "userTime"];
+        //Cherry pick white-listed properties
+        const whiteList = ["metadata", "ravencoinAddress", "userTime"];
 
         whiteList.map(function (prop) {
           const value = orderIntent[prop];
@@ -35,17 +34,17 @@ async function work(firebase) {
             toSave[prop] = value;
           }
         });
+        console.log("Updating order", orderIntentKey, "with", toSave);
 
         orderRef.update(toSave);
 
         //Delete the intent
-        const intentRef = db.ref("/order-intents/" + user + "/" + key);
+        const intentRef = db.ref(
+          "/order-intents/" + user + "/" + orderIntentKey
+        );
         intentRef.remove();
       }
     }
-
-    // ref.on("child_added", eventListener);
-    //  ref.on("child_changed", eventListener);
   };
 
   //One second debounce, multiple updates can come at once

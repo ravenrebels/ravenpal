@@ -52,6 +52,9 @@ function executeOrder(firebaseRef, paypal, order) {
     function (error, payment) {
       if (error) {
         console.log("Error processing payment id", paymentId, error);
+        firebaseRef.update({
+          error: error,
+        });
       } else {
         firebaseRef.update({
           payment: payment,

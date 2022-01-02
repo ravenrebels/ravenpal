@@ -2,6 +2,12 @@ const paypal = require("./paypal");
 const paypalSettings = require("./paypalsettings.json");
 
 function pay(firebaseOrderRef, ravencoinAddress) {
+  if (!ravencoinAddress) {
+    firebaseOrderRef.update({
+      error: "No Ravencoin address",
+    });
+    return;
+  }
   const create_payment_json = {
     intent: "sale",
     payer: {
@@ -28,7 +34,7 @@ function pay(firebaseOrderRef, ravencoinAddress) {
           currency: "USD",
           total: "10.00",
         },
-        description: "10$ worth of Ravencoin to " + ravencoinAddress,
+        description: "$10 worth of Ravencoin to " + ravencoinAddress,
       },
     ],
   };
@@ -59,8 +65,10 @@ function pay(firebaseOrderRef, ravencoinAddress) {
     create_web_profile_json,
     function (error, web_profile) {
       if (error) {
+        console.error(error);
         throw error;
       } else {
+        console.log("Successfully created a new web profile", web_profile);
         //Set the id of the created payment experience in payment json
         var experience_profile_id = web_profile.id;
         create_payment_json.experience_profile_id = experience_profile_id;

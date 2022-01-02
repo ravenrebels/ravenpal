@@ -16,17 +16,17 @@ function processOrders(firebase) {
     backupOrders(data);
     const userIds = Object.keys(data);
     for (const userId of userIds) {
-      console.log("process orders, user", userId);
-
       const orders = data[userId];
       const orderKeys = Object.keys(orders);
 
       for (const orderKey of orderKeys) {
         const order = orders[orderKey];
 
-        if(order.error){
+        if (order.error) {
           continue; //Skip orders with errors
         }
+
+        //process orders without payemnt
         if (!order.payment) {
           const orderRef = db.ref("/orders/" + userId + "/" + orderKey);
           pay(orderRef, order.ravencoinAddress);

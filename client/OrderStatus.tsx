@@ -5,6 +5,9 @@ export function OrderStatus({ order }) {
     return null;
   }
 
+  if (order.error) {
+    console.log("order id", order.id, "has error", order.error);
+  }
   if (!order.payment) {
     return null;
   }
@@ -76,7 +79,9 @@ export function OrderStatus({ order }) {
       }}
     >
       <h3 className="order-status__headline">{headline}</h3>
-      {!order.ravencoinTransactionId && <h3>Digital goods not sent to you yet!</h3>}
+      {!order.ravencoinTransactionId && (
+        <h3>Digital goods not sent to you yet!</h3>
+      )}
       {id}
       {state}
       {currency}
