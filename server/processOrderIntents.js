@@ -1,4 +1,4 @@
-const pay = require("./pay");
+const pay = require("./createPayment");
 const debounce = require("lodash.debounce");
 async function work(firebase) {
   const db = firebase.database();

@@ -1,5 +1,5 @@
 const paypal = require("./paypal");
-const pay = require("./pay");
+const pay = require("./createPayment");
 const fs = require("fs");
 const debounce = require("lodash.debounce");
 
@@ -29,7 +29,7 @@ function processOrders(firebase) {
         //process orders without payemnt
         if (!order.payment) {
           const orderRef = db.ref("/orders/" + userId + "/" + orderKey);
-          pay(orderRef, order.ravencoinAddress);
+          createPayment(orderRef, order.ravencoinAddress);
         }
       }
     }
@@ -43,7 +43,6 @@ function backupOrders(data) {
   //Backup the orders
   //Make sure that the folder backup/orders exists
   fs.mkdirSync("./backup/orders", { recursive: true });
-
   const json = JSON.stringify(data);
 
   fs.writeFileSync("./backup/orders/" + Date.now() + ".json", json);

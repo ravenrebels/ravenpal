@@ -55,6 +55,7 @@ export function App({ firebase, logOut, user }: IProps) {
   return (
     <div className="card">
       <img src={user.photoURL} className="profile-image"></img>
+      <img className="paypal-logo" src="https://www.paypalobjects.com/digitalassets/c/website/logo/full-text/pp_fc_hl.svg"></img>
       <Instructions
         dollarAmountPay={dollarAmountPay}
         dollarAmountGet={dollarAmountGet}

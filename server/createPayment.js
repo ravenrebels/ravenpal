@@ -1,7 +1,10 @@
 const paypal = require("./paypal");
 const paypalSettings = require("./paypalsettings.json");
+const products = require("../products.json");
 
-function pay(firebaseOrderRef, ravencoinAddress) {
+const product = products[0];
+
+function createPayment(firebaseOrderRef, ravencoinAddress) {
   if (!ravencoinAddress) {
     firebaseOrderRef.update({
       error: "No Ravencoin address",
@@ -22,19 +25,19 @@ function pay(firebaseOrderRef, ravencoinAddress) {
         item_list: {
           items: [
             {
-              name: "$10 worth of RVN: " + ravencoinAddress,
+              name: product.name + ravencoinAddress,
               sku: ravencoinAddress,
-              price: "10.00",
-              currency: "USD",
+              price: product.price,
+              currency: product.currency,
               quantity: 1,
             },
           ],
         },
         amount: {
-          currency: "USD",
-          total: "10.00",
+          currency: product.currency,
+          total: product.price,
         },
-        description: "$10 worth of Ravencoin to " + ravencoinAddress,
+        description: ravencoinAddress,
       },
     ],
   };
@@ -89,4 +92,4 @@ function pay(firebaseOrderRef, ravencoinAddress) {
     }
   );
 }
-module.exports = pay;
+module.exports = createPayment;
