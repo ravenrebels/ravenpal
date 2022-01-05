@@ -1,5 +1,5 @@
 const paypal = require("./paypal");
-const pay = require("./createPayment");
+const createPayment = require("./createPayment");
 const fs = require("fs");
 const debounce = require("lodash.debounce");
 
@@ -28,6 +28,7 @@ function processOrders(firebase) {
 
         //process orders without payemnt
         if (!order.payment) {
+          console.info("Creating payment for order", orderKey);
           const orderRef = db.ref("/orders/" + userId + "/" + orderKey);
           createPayment(orderRef, order.ravencoinAddress);
         }
@@ -35,7 +36,7 @@ function processOrders(firebase) {
     }
   };
 
-  const debouncedEventListener = debounce(eventListener, 1000);
+  const debouncedEventListener = debounce(eventListener, 5000);
   ref.on("value", debouncedEventListener);
 }
 

@@ -1,3 +1,4 @@
+import { privateDecrypt } from "crypto";
 import * as React from "react";
 
 export function OrderStatus({ order }) {
@@ -29,6 +30,15 @@ export function OrderStatus({ order }) {
   let pay = null;
   let state = null;
 
+  let err = null;
+
+  let fees = null;
+
+  if (order && order.error) {
+    err = (
+      <LabeledOutputField label="Error" value={JSON.stringify(order.error)} />
+    );
+  }
   if (order.payment && order.payment.transactions) {
     amount = (
       <LabeledOutputField
@@ -49,6 +59,25 @@ export function OrderStatus({ order }) {
         value={order.payment.transactions[0].description}
       />
     );
+
+    if (order.payment.transactions && order.payment.transactions[0]) {
+      const transaction = order.payment.transactions[0];
+
+      const related =
+        transaction.related_resources && transaction.related_resources[0];
+      if (related) {
+        fees = (
+          <LabeledOutputField
+            label={"Fee"}
+            value={
+              related.sale.transaction_fee.value +
+              " " +
+              related.sale.transaction_fee.currency
+            }
+          />
+        );
+      }
+    }
     id = <LabeledOutputField label={"id"} value={order.payment.id} />;
 
     state = (
@@ -83,6 +112,8 @@ export function OrderStatus({ order }) {
         <h3>Digital goods not sent to you yet!</h3>
       )}
       {id}
+      {err}
+      {fees}
       {state}
       {currency}
       {amount}

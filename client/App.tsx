@@ -2,8 +2,7 @@ import * as React from "react";
 import { Instructions } from "./Instructions";
 import { User } from "@firebase/auth-types";
 import { OrderStatus } from "./OrderStatus";
-
-import Buy from "./Buy";
+import * as products from "../products.json";
 
 interface IProps {
   firebase: any;
@@ -19,8 +18,8 @@ enum Routes {
 }
 export function App({ firebase, logOut, user }: IProps) {
   const [route, setRoute] = React.useState(Routes.HOME);
-  const dollarAmountPay = 60;
-  const dollarAmountGet = 57;
+  const dollarAmountPay = parseInt(products[0].price);
+  const dollarAmountGet = (dollarAmountPay - 3) * 0.99; //Paypal fees plus our 1 percent fee
 
   const [orders, setOrders] = React.useState(null);
 
@@ -55,7 +54,10 @@ export function App({ firebase, logOut, user }: IProps) {
   return (
     <div className="card">
       <img src={user.photoURL} className="profile-image"></img>
-      <img className="paypal-logo" src="https://www.paypalobjects.com/digitalassets/c/website/logo/full-text/pp_fc_hl.svg"></img>
+      <img
+        className="paypal-logo"
+        src="https://www.paypalobjects.com/digitalassets/c/website/logo/full-text/pp_fc_hl.svg"
+      ></img>
       <Instructions
         dollarAmountPay={dollarAmountPay}
         dollarAmountGet={dollarAmountGet}

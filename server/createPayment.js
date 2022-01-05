@@ -25,7 +25,7 @@ function createPayment(firebaseOrderRef, ravencoinAddress) {
         item_list: {
           items: [
             {
-              name: product.name + ravencoinAddress,
+              name: product.name + " " + ravencoinAddress,
               sku: ravencoinAddress,
               price: product.price,
               currency: product.currency,
@@ -49,7 +49,7 @@ function createPayment(firebaseOrderRef, ravencoinAddress) {
   const create_web_profile_json = {
     name: profile_name,
     presentation: {
-      brand_name: "Best Brand",
+      brand_name: "Raven Rebels",
       logo_image:
         "https://www.paypalobjects.com/webstatic/mktg/logo/AM_SbyPP_mc_vs_dc_ae.jpg",
       locale_code: "US",

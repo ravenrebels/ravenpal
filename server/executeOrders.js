@@ -1,10 +1,12 @@
 const paypal = require("./paypal");
 
+const products = require("../products.json");
+const debounce = require("lodash.debounce");
 function executeOrders(firebase) {
   const db = firebase.database();
   const ref = db.ref("/orders");
 
-  ref.on("value", (snapshot) => {
+  const valueListener = (snapshot) => {
     const data = snapshot.val();
 
     if (data === null) {
@@ -12,7 +14,6 @@ function executeOrders(firebase) {
     }
     const userIds = Object.keys(data);
     for (const userId of userIds) {
-      console.log("process orders, user", userId);
       const orders = data[userId];
       const orderKeys = Object.keys(orders);
 
@@ -26,23 +27,27 @@ function executeOrders(firebase) {
         }
       }
     }
-  });
+  };
+
+  const debouncedListener = debounce(valueListener, 3000);
+  ref.on("value", debouncedListener);
 }
 
 function executeOrder(firebaseRef, paypal, order) {
   const payerId = order.metadata.PayerID;
   const paymentId = order.metadata.paymentId;
+  const product = products[0];
 
   const execute_payment_json = {
     payer_id: payerId,
-    transactions: [
+    /*  transactions: [
       {
         amount: {
-          currency: "USD",
-          total: "10.00",
+          currency: product.currency,
+          total: product.price,
         },
       },
-    ],
+    ],*/
   };
 
   paypal.payment.execute(
@@ -70,7 +75,9 @@ function shouldExecuteOrder(order) {
   if (!order) {
     return false;
   }
-
+  if (order.error) {
+    return false;
+  }
   if (!order.metadata) {
     return false;
   }
