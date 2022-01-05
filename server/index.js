@@ -15,11 +15,12 @@ admin.initializeApp({
 //User generated order-intents should be moved to /orders
 processOrderIntents(admin);
 
-//Process the orders, users do not have write access t orders
+//Process the orders, users do not have write access to orders
 processOrders(admin);
 
 //Execute orders in state "created", where the endn user has accepted them
 
 executeOrders(admin);
 
+//Check that we have sent assets to all orders that are approved. orders that are approved
 //TODO, send digital assets to the buyer

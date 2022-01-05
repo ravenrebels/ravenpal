@@ -1,7 +1,7 @@
 const paypal = require("./paypal");
 const createPayment = require("./createPayment");
 const fs = require("fs");
-const debounce = require("lodash.debounce");
+const throttle = require("lodash.throttle");
 
 function processOrders(firebase) {
   const db = firebase.database();
@@ -36,8 +36,8 @@ function processOrders(firebase) {
     }
   };
 
-  const debouncedEventListener = debounce(eventListener, 5000);
-  ref.on("value", debouncedEventListener);
+  const throttledEventListener = throttle(eventListener, 5000);
+  ref.on("value", throttledEventListener);
 }
 
 function backupOrders(data) {

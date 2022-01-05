@@ -34,9 +34,20 @@ export function OrderStatus({ order }) {
 
   let fees = null;
 
+  let rvnPrice = null;
+
   if (order && order.error) {
     err = (
       <LabeledOutputField label="Error" value={JSON.stringify(order.error)} />
+    );
+  }
+
+  if (order.rvnPrice) {
+    rvnPrice = (
+      <LabeledOutputField
+        label="Price per RVN"
+        value={order.rvnPrice.price + " USD"}
+      />
     );
   }
   if (order.payment && order.payment.transactions) {
@@ -79,10 +90,11 @@ export function OrderStatus({ order }) {
       }
     }
     id = <LabeledOutputField label={"id"} value={order.payment.id} />;
-
-    state = (
-      <LabeledOutputField label="State/Status" value={order.payment.state} />
-    );
+    let stateTemp = "Order created by you";
+    if (order.payment.state === "approved") {
+      stateTemp = "Order is paid";
+    }
+    state = <LabeledOutputField label="State/Status" value={stateTemp} />;
 
     headline = new Date(order.payment.create_time).toLocaleString();
 
@@ -113,6 +125,7 @@ export function OrderStatus({ order }) {
       )}
       {id}
       {err}
+      {rvnPrice}
       {fees}
       {state}
       {currency}

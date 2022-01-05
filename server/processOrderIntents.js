@@ -1,5 +1,5 @@
 const createPayment = require("./createPayment");
-const debounce = require("lodash.debounce");
+const throttle = require("lodash.throttle");
 async function work(firebase) {
   const db = firebase.database();
 
@@ -47,8 +47,8 @@ async function work(firebase) {
     }
   };
 
-  //One second debounce, multiple updates can come at once
-  const debouncedEventListener = debounce(eventListener, 1000);
-  ref.on("value", debouncedEventListener);
+  //Three second throttle, multiple updates can come at once
+  const throttledEventListener = throttle(eventListener, 3000);
+  ref.on("value", throttledEventListener);
 }
 module.exports = work;

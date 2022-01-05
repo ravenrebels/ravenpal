@@ -1,7 +1,7 @@
 const paypal = require("./paypal");
-
+const axios = require("axios");
 const products = require("../products.json");
-const debounce = require("lodash.debounce");
+const throttle = require("lodash.throttle");
 function executeOrders(firebase) {
   const db = firebase.database();
   const ref = db.ref("/orders");
@@ -29,8 +29,8 @@ function executeOrders(firebase) {
     }
   };
 
-  const debouncedListener = debounce(valueListener, 3000);
-  ref.on("value", debouncedListener);
+  const throttledEventListener = throttle(valueListener, 3000);
+  ref.on("value", throttledEventListener);
 }
 
 function executeOrder(firebaseRef, paypal, order) {
@@ -66,6 +66,16 @@ function executeOrder(firebaseRef, paypal, order) {
         });
         const json = JSON.stringify(payment, null, 4);
         console.log(JSON.stringify(payment));
+
+        //Fetch current RVN price from Binance
+
+        const URL =
+          "https://api1.binance.com/api/v3/ticker/price?symbol=RVNUSDT";
+        axios.get(URL).then((response) => {
+          firebaseRef.update({
+            rvnPrice: response.data,
+          });
+        });
       }
     }
   );
