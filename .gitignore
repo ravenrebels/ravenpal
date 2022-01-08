@@ -3,6 +3,7 @@ paypalsettings.json
 firebaseConfig.json
 firebaseServiceAccount.json
 server/backup
+ravenConfig.json
 .parcel-cache
 # Logs
 logs
