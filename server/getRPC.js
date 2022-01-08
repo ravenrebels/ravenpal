@@ -40,6 +40,7 @@ function getRPC(config) {
             resolutionFunc(result);
           })
           .catch((e) => {
+            console.log("ERROR data", data);
               console.log("Mega error", e);
             if (e.response) {
               //We were able to connect to the wallet but something was wrong with our request

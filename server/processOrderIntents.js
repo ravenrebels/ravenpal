@@ -39,6 +39,10 @@ async function work(firebase) {
         const intentRef = db.ref(
           "/order-intents/" + user + "/" + orderIntentKey
         );
+
+        if (!orderIntent.ravencoinAddress) {
+          continue;
+        }
         console.log("Validate if", orderIntent.ravencoinAddress);
         const validatePromise = rpc("validateaddress", [
           orderIntent.ravencoinAddress,

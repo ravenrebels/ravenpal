@@ -99,21 +99,10 @@ export function OrderStatus({ order }) {
     }
   }
   return (
-    <li
-      className="card order-status container"
-      key={order.id}
-      style={{
-        border: "1px solid black",
-        padding: "20px",
-        marginBottom: "10px",
-        borderRadius: "10px",
-      }}
-    >
-      <div className="card-body">
-        <h3 className="order-status__headline">{headline}</h3>
-        {!order.ravencoinTransactionId && (
-          <h3>Digital goods not sent to you yet!</h3>
-        )}
+    <li className="order-status" key={order.id}>
+      <div className="glasscard">
+        <h5 class="card-title">{headline}</h5>
+
         {id}
         {err}
         {order.ravencoinAddress && (

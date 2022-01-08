@@ -14,12 +14,14 @@ interface IProps {
 
 enum Routes {
   HOME,
-  BUY,
+  STEP1,
+  STEP2,
+  STEP3,
   SUCCESS,
   CANCEL,
 }
 export function App({ firebase, logOut, user }: IProps) {
-  const [route, setRoute] = React.useState(Routes.HOME);
+  const [route, setRoute] = React.useState(Routes.STEP1);
   const dollarAmountPay = parseInt(products[0].price);
   const dollarAmountGet = (dollarAmountPay - 3) * 0.99; //Paypal fees plus our 1 percent fee
   const [ravencoinAddress, setRavencoinAddress] = React.useState(null);
@@ -38,29 +40,6 @@ export function App({ firebase, logOut, user }: IProps) {
     return cleanup;
   }, []);
 
-  const buyEventListener = async () => {
-    //Validate address
-    const isAddressValid = await validateAddress(firebase, ravencoinAddress);
-    if (isAddressValid) {
-      const orderRef = submitBuyOrder(firebase, user, ravencoinAddress);
-
-      //Subscribe to changes in Firebase, unregister on getting redirect URL
-      const listener = orderRef.on("value", function (snapshot) {
-        const data = snapshot.val();
-        if (!data) {
-          return;
-        }
-        if (data.redirectURL) {
-          orderRef.off("value", listener);
-          window.location = data.redirectURL;
-        }
-      });
-    }
-
-    if (isAddressValid === false) {
-      alert(ravencoinAddress + " is not a valid Ravencoin address");
-    }
-  };
   //Orders sorted by date
   const ordersArray = ordersByDate(orders);
 
@@ -94,43 +73,50 @@ export function App({ firebase, logOut, user }: IProps) {
         dollarAmountGet={dollarAmountGet}
       />
 
-      {/* RAVENCOIN ADDRESS */}
-      <div className="mb-3">
-        <label htmlFor="exampleFormControlInput1" className="form-label">
-          Ravencoin address
-        </label>
-        <input
-          className="form-control"
-          id="exampleFormControlInput1"
-          onChange={(event) => {
-            setRavencoinAddress(event.target.value);
-          }}
-          placeholder="Your Ravencoin address"
-          type="text"
-          value={ravencoinAddress || ""}
-        />
-      </div>
+      {route === Routes.STEP1 && (
+        <Step1
+          firebase={firebase}
+          next={() => {
+            //Subscribe to changes in Firebase, unregister on getting redirect URL
+            const orderIntentRef = submitBuyOrder(
+              firebase,
+              user,
+              ravencoinAddress
+            );
+            const str = "orders/" + user.uid + "/" + orderIntentRef.key;
 
-      {/* BUY BUTTON */}
-      <button style={payButtonStyle} onClick={buyEventListener}>
-        Buy Ravencoin with{" "}
-        <img
-          className="paypal-logo"
-          src="https://www.paypalobjects.com/digitalassets/c/website/logo/full-text/pp_fc_hl.svg"
-        ></img>
-      </button>
+            const orderRef = firebase.database().ref(str);
+            console.log("Submit order", str, orderRef);
+
+            const asdf = () => {
+              orderRef.once("value", (snapshot) => {
+                console.log("Datta", snapshot.val());
+              });
+            };
+
+            setTimeout(asdf, 2000);
+            const listener = orderRef.on("value", function (snapshot) {
+              console.log("Got data for", snapshot);
+              const data = snapshot.val();
+              if (!data) {
+                return;
+              }
+              console.log(data);
+              if (data.redirectURL) {
+                orderRef.off("value", listener);
+                window.location = data.redirectURL;
+              }
+            });
+          }}
+          ravencoinAddress={ravencoinAddress}
+          setRavencoinAddress={setRavencoinAddress}
+        />
+      )}
+
+      {route === Routes.STEP2 && <Step2 />}
 
       {/* LIST OF ORDERS */}
-      {orders && Object.keys(orders).length > 0 && (
-        <div>
-          <h1>My order history</h1>
-          <ul className="order-status">
-            {ordersArray.map(function (order) {
-              return <OrderStatus order={order} />;
-            })}
-          </ul>
-        </div>
-      )}
+      <Orders orders={ordersArray} />
     </div>
   );
 }
@@ -212,4 +198,81 @@ function Cancel({ firebase, orders, user }) {
   FileSystemDirectoryReader;
 
   return <div>Cancel</div>;
+}
+
+function Orders({ orders }) {
+  if (!orders) {
+    return null;
+  }
+
+  return (
+    <div>
+      <h1>My order history</h1>
+      <ul className="order-status">
+        {orders.map(function (order) {
+          return <OrderStatus order={order} />;
+        })}
+      </ul>
+    </div>
+  );
+}
+
+function Step(props) {
+  
+  return (
+    <div className="glasscard"  >
+      {props.children}
+    </div>
+  );
+}
+function Step1({ firebase, next, ravencoinAddress, setRavencoinAddress }) {
+  enum Status {
+    NORMAL,
+    VALIDATING,
+  }
+  const [status, setStatus] = React.useState(Status.NORMAL);
+  return (
+    <Step>
+      <div className="mb-3">
+        <h2>Step 1: Enter your Ravencoin Address</h2>
+        <label htmlFor="exampleFormControlInput1" className="form-label">
+          Ravencoin address
+        </label>
+        <input
+          className="form-control"
+          id="exampleFormControlInput1"
+          onChange={(event) => {
+            setRavencoinAddress(event.target.value);
+          }}
+          placeholder="Your Ravencoin address"
+          type="text"
+          value={ravencoinAddress || ""}
+        />
+
+        <button
+          className="btn btn-primary mt-4"
+          onClick={async () => {
+            setStatus(Status.VALIDATING);
+            const promise = validateAddress(firebase, ravencoinAddress);
+
+            promise.then((d) => {
+              if (d === true) {
+                next();
+              } else {
+                alert("Not ok");
+              }
+            });
+          }}
+        >
+          Next
+        </button>
+      </div>
+    </Step>
+  );
+}
+function Step2(props) {
+  return <div>Step 2</div>;
+}
+function Step3(props) {
+  return <div> Step 2</div>;
 }

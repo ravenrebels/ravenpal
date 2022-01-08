@@ -37,6 +37,7 @@ function processValidationOfAddresses(firebase) {
       const data = snapshot.val();
       console.log("Validate address", data);
       if (!data) {
+        console.log("No return of address, return");
         return;
       }
       const keys = Object.keys(data);
@@ -50,6 +51,10 @@ function processValidationOfAddresses(firebase) {
         if (address.isValid === false) {
           continue;
         }
+        if (!address.ravencoinAddress) {
+          continue;
+        }
+        console.log("Will call validate address with ", address);
         const promise = rpc("validateaddress", [address.ravencoinAddress]);
         promise.then((d) => {
           firebase
@@ -58,6 +63,9 @@ function processValidationOfAddresses(firebase) {
             .update({
               isValid: d.isvalid,
             });
+        });
+        promise.catch((e) => {
+          console.log("SUPER DUPER MEGA FEL");
         });
       }
     });
