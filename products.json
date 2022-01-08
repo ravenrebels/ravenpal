@@ -1,8 +1,9 @@
 [
   {
-    "name": "$80 worth of RVN",
+    "name": "PANDA, Ravencoin asset",
     "sku": "",
-    "price": "80.00",
-    "currency": "USD"
+    "price": "2",
+    "currency": "USD",
+    "description": "By buying you support the open source development of the Ravenpal project"
   }
 ]

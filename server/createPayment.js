@@ -37,7 +37,7 @@ function createPayment(firebaseOrderRef, ravencoinAddress) {
           currency: product.currency,
           total: product.price,
         },
-        description: ravencoinAddress,
+        description: product.description + " " + ravencoinAddress,
       },
     ],
   };

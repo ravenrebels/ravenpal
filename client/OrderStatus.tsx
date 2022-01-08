@@ -6,37 +6,22 @@ export function OrderStatus({ order }) {
     return null;
   }
 
-  if (order.error) {
-    console.log("order id", order.id, "has error", order.error);
-  }
   if (!order.payment) {
     return null;
   }
 
-  if (order.canceledByUser) {
-    return null;
-  }
-  const json = JSON.stringify(order, null, 4);
-  console.log(order);
-
   let amount = null;
   let currency = null;
   let description = null;
-  let date = null;
-
+  let err = null;
+  let fees = null;
   let headline = order.id;
   let id = null;
-
   let pay = null;
+  let rvnPrice = null;
   let state = null;
 
-  let err = null;
-
-  let fees = null;
-
-  let rvnPrice = null;
-
-  if (order && order.error) {
+  if (order.error) {
     err = (
       <LabeledOutputField label="Error" value={JSON.stringify(order.error)} />
     );
@@ -50,7 +35,7 @@ export function OrderStatus({ order }) {
       />
     );
   }
-  if (order.payment && order.payment.transactions) {
+  if (order.payment.transactions) {
     amount = (
       <LabeledOutputField
         label="Currency"
@@ -94,6 +79,9 @@ export function OrderStatus({ order }) {
     if (order.payment.state === "approved") {
       stateTemp = "Order is paid";
     }
+    if (order.canceledByUser) {
+      stateTemp = "CANCELED";
+    }
     state = <LabeledOutputField label="State/Status" value={stateTemp} />;
 
     headline = new Date(order.payment.create_time).toLocaleString();
@@ -103,14 +91,16 @@ export function OrderStatus({ order }) {
     } else if (order.payment.state === "created") {
       pay = (
         <div>
-          <a href={order.redirectURL}>Pay</a>
+          <a href={order.redirectURL} className="btn btn-primary">
+            Pay
+          </a>
         </div>
       );
     }
   }
   return (
     <li
-      className="order-status"
+      className="card order-status container"
       key={order.id}
       style={{
         border: "1px solid black",
@@ -119,28 +109,40 @@ export function OrderStatus({ order }) {
         borderRadius: "10px",
       }}
     >
-      <h3 className="order-status__headline">{headline}</h3>
-      {!order.ravencoinTransactionId && (
-        <h3>Digital goods not sent to you yet!</h3>
-      )}
-      {id}
-      {err}
-      {rvnPrice}
-      {fees}
-      {state}
-      {currency}
-      {amount}
-      {description}
-      {pay}
+      <div className="card-body">
+        <h3 className="order-status__headline">{headline}</h3>
+        {!order.ravencoinTransactionId && (
+          <h3>Digital goods not sent to you yet!</h3>
+        )}
+        {id}
+        {err}
+        {order.ravencoinAddress && (
+          <LabeledOutputField
+            label="Ravencoin address"
+            value={order.ravencoinAddress}
+          ></LabeledOutputField>
+        )}
+        {rvnPrice}
+        {fees}
+        {state}
+        {currency}
+        {amount}
+        {description}
+        {pay}
+      </div>
     </li>
   );
 }
 
 function LabeledOutputField({ label, value }) {
   return (
-    <div className="order-status__labeled-output-field">
-      <label>{label}</label>
-      <output>{value}</output>
+    <div className="row order-status">
+      <div className="col-sm-3" style={{ textAlign: "right" }}>
+        <label className="order-status__label">{label}</label>
+      </div>
+      <div className="col">
+        <output>{value}</output>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,11 @@
 const createPayment = require("./createPayment");
+const getRPC = require("./getRPC");
+const config = require("./ravenConfig.json");
+const rpc = getRPC({
+  rpcURL: config.rpcURL,
+  rpcUsername: config.rpcUsername,
+  rpcPassword: config.rpcPassword,
+});
 const throttle = require("lodash.throttle");
 async function work(firebase) {
   const db = firebase.database();
@@ -24,25 +31,45 @@ async function work(firebase) {
         //convert the order-intent to an order, users do not have write access to /orders
         const orderRef = db.ref("/orders/" + user + "/" + orderIntentKey);
 
-        const toSave = {};
-        //Cherry pick white-listed properties
-        const whiteList = ["metadata", "ravencoinAddress", "userTime"];
-
-        whiteList.map(function (prop) {
-          const value = orderIntent[prop];
-          if (value) {
-            toSave[prop] = value;
-          }
-        });
-        console.log("Updating order", orderIntentKey, "with", toSave);
-
-        orderRef.update(toSave);
-
-        //Delete the intent
+        //If order intent already have errors, skip
+        if (orderIntent.error) {
+          continue;
+        }
+        //TODO verify that the ravencoinAddress is valid
         const intentRef = db.ref(
           "/order-intents/" + user + "/" + orderIntentKey
         );
-        intentRef.remove();
+        console.log("Validate if", orderIntent.ravencoinAddress);
+        const validatePromise = rpc("validateaddress", [
+          orderIntent.ravencoinAddress,
+        ]);
+
+        validatePromise.then((d) => {
+          const toSave = {};
+          //Cherry pick white-listed properties
+          const whiteList = [
+            "metadata",
+            "ravencoinAddress",
+            "userTime",
+            "canceledByUser",
+          ];
+
+          whiteList.map(function (prop) {
+            const value = orderIntent[prop];
+            if (value) {
+              toSave[prop] = value;
+            }
+          });
+          if (d.isvalid !== true) {
+            toSave["error"] = "Invalid Ravencoin address";
+          }
+          console.log("Updating order", orderIntentKey, "with", toSave);
+
+          orderRef.update(toSave);
+
+          //Delete the intent
+          intentRef.remove();
+        });
       }
     }
   };

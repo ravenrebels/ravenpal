@@ -82,7 +82,7 @@ function Success() {
       }
     });
   }
-  return <div className="card">Success......</div>;
+  return <div>Success......</div>;
 }
 
 function useUser(): User {

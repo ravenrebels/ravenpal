@@ -4,6 +4,8 @@ import { User } from "@firebase/auth-types";
 import { OrderStatus } from "./OrderStatus";
 import * as products from "../products.json";
 
+import validateAddress from "./validateAddress";
+
 interface IProps {
   firebase: any;
   logOut: any;
@@ -20,6 +22,7 @@ export function App({ firebase, logOut, user }: IProps) {
   const [route, setRoute] = React.useState(Routes.HOME);
   const dollarAmountPay = parseInt(products[0].price);
   const dollarAmountGet = (dollarAmountPay - 3) * 0.99; //Paypal fees plus our 1 percent fee
+  const [ravencoinAddress, setRavencoinAddress] = React.useState(null);
 
   const [orders, setOrders] = React.useState(null);
 
@@ -35,6 +38,29 @@ export function App({ firebase, logOut, user }: IProps) {
     return cleanup;
   }, []);
 
+  const buyEventListener = async () => {
+    //Validate address
+    const isAddressValid = await validateAddress(firebase, ravencoinAddress);
+    if (isAddressValid) {
+      const orderRef = submitBuyOrder(firebase, user, ravencoinAddress);
+
+      //Subscribe to changes in Firebase, unregister on getting redirect URL
+      const listener = orderRef.on("value", function (snapshot) {
+        const data = snapshot.val();
+        if (!data) {
+          return;
+        }
+        if (data.redirectURL) {
+          orderRef.off("value", listener);
+          window.location = data.redirectURL;
+        }
+      });
+    }
+
+    if (isAddressValid === false) {
+      alert(ravencoinAddress + " is not a valid Ravencoin address");
+    }
+  };
   //Orders sorted by date
   const ordersArray = ordersByDate(orders);
 
@@ -47,51 +73,64 @@ export function App({ firebase, logOut, user }: IProps) {
   //Does any order have state "created"?
   ordersArray.map(function (order) {
     if (order.payment && order.payment.state === "created") {
-      //   window.location = order.redirectURL;
+      // window.location = order.redirectURL;
     }
   });
-
+  const showPayButton = ravencoinAddress && ravencoinAddress.length > 20;
+  const payButtonStyle = {
+    display: (showPayButton && "block") || "none",
+  };
   return (
-    <div className="card">
+    <div>
+      {/* PROFILE PICTURE */}
       <img src={user.photoURL} className="profile-image"></img>
-      <img
-        className="paypal-logo"
-        src="https://www.paypalobjects.com/digitalassets/c/website/logo/full-text/pp_fc_hl.svg"
-      ></img>
+      <button className="btn btn-secondary  sign-out-button" onClick={logOut}>
+        Sign out
+      </button>
+
+      {/* INSTRUCTIONS */}
       <Instructions
         dollarAmountPay={dollarAmountPay}
         dollarAmountGet={dollarAmountGet}
       />
-      <button
-        className="button-27"
-        onClick={() => {
-          const firebaseOrderRef = submitBuyOrder(firebase, user);
-          //Get reference to /order/userid/key, can we use parent().parent()?
-          const key = firebaseOrderRef.key;
 
-          //Subscribe to changes in Firebase, unregister on getting redirect URL
-          const listener = firebaseOrderRef.on("value", function (snapshot) {
-            const data = snapshot.val();
-            if (!data) {
-              return;
-            }
-            if (data.redirectURL) {
-              window.location = data.redirectURL;
-            }
-          });
-        }}
-      >
-        Buy Ravencoin with Paypal
+      {/* RAVENCOIN ADDRESS */}
+      <div className="mb-3">
+        <label htmlFor="exampleFormControlInput1" className="form-label">
+          Ravencoin address
+        </label>
+        <input
+          className="form-control"
+          id="exampleFormControlInput1"
+          onChange={(event) => {
+            setRavencoinAddress(event.target.value);
+          }}
+          placeholder="Your Ravencoin address"
+          type="text"
+          value={ravencoinAddress || ""}
+        />
+      </div>
+
+      {/* BUY BUTTON */}
+      <button style={payButtonStyle} onClick={buyEventListener}>
+        Buy Ravencoin with{" "}
+        <img
+          className="paypal-logo"
+          src="https://www.paypalobjects.com/digitalassets/c/website/logo/full-text/pp_fc_hl.svg"
+        ></img>
       </button>
-      <button className="button-27 sign-out-button" onClick={logOut}>
-        Sign out
-      </button>
-      <h1>My order history</h1>
-      <ul className="order-status">
-        {ordersArray.map(function (order) {
-          return <OrderStatus order={order} />;
-        })}
-      </ul>
+
+      {/* LIST OF ORDERS */}
+      {orders && Object.keys(orders).length > 0 && (
+        <div>
+          <h1>My order history</h1>
+          <ul className="order-status">
+            {ordersArray.map(function (order) {
+              return <OrderStatus order={order} />;
+            })}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
@@ -107,11 +146,13 @@ const sortOrdersByDate = function (a, b) {
   }
   return 1;
 };
-function submitBuyOrder(firebase, user) {
+function submitBuyOrder(firebase, user, ravencoinAddress) {
+  //Validate ravencoin address
+
   const userRef = firebase.database().ref("/order-intents/" + user.uid);
   const orderRef = userRef.push();
   orderRef.set({
-    ravencoinAddress: "RFb2XBw4WC1rZYave93DorxLBym3piGVLo",
+    ravencoinAddress: ravencoinAddress,
     userTime: new Date().toISOString(),
   });
   return orderRef;
@@ -144,7 +185,7 @@ function Cancel({ firebase, orders, user }) {
   if (!orders) {
     return null;
   }
-  //EC-6A4185222B789550X
+
   let searchParams = new URLSearchParams(window.location.href);
   const token = searchParams.get("token");
 
