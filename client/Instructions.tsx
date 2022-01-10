@@ -25,9 +25,25 @@ function useHowManyRVN(dollarAmountGet) {
 
   return howMany;
 }
-
-export function Instructions({ dollarAmountPay, dollarAmountGet }) {
-  const howMany = useHowManyRVN(dollarAmountGet);
+interface IProduct {
+  description: string;
+  name: string;
+  imageURL?: string;
+}
+interface IProps {
+  product: IProduct;
+}
+export function Instructions({ product }: IProps) {
+  return (
+    <div>
+      <h1>{product.name}</h1>
+      {product.imageURL && (
+        <img className="mt-4 mb-4" src={product.imageURL} width="200" />
+      )}
+      <p className ="lead">{product.description}</p>
+    </div>
+  );
+  /*  const howMany = useHowManyRVN(dollarAmountGet);
   return (
     <div>
       <h1>Buy some RVN</h1>
@@ -39,5 +55,5 @@ export function Instructions({ dollarAmountPay, dollarAmountGet }) {
 
     
     </div>
-  );
+  );*/
 }

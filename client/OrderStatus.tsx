@@ -19,6 +19,7 @@ export function OrderStatus({ order }) {
   let id = null;
   let pay = null;
   let rvnPrice = null;
+  let ravencoinTransactionId = null;
   let state = null;
 
   if (order.error) {
@@ -36,6 +37,22 @@ export function OrderStatus({ order }) {
     );
   }
   if (order.payment.transactions) {
+    ravencoinTransactionId = (
+      <LabeledOutputField
+        label="Ravencoin transaction id"
+        value={
+          <a
+            href={
+              "https://rvn.cryptoscope.io/tx/?txid=" +
+              order.ravencoinTransactionId
+            }
+            target="_blank"
+          >
+            {order.ravencoinTransactionId}
+          </a>
+        }
+      />
+    );
     amount = (
       <LabeledOutputField
         label="Currency"
@@ -117,6 +134,7 @@ export function OrderStatus({ order }) {
         {currency}
         {amount}
         {description}
+        {ravencoinTransactionId}
         {pay}
       </div>
     </li>
@@ -125,11 +143,11 @@ export function OrderStatus({ order }) {
 
 function LabeledOutputField({ label, value }) {
   return (
-    <div className="row order-status">
-      <div className="col-sm-3" style={{ textAlign: "right" }}>
+    <div className="row order-status mt-4">
+      <div className="col col-sm-12">
         <label className="order-status__label">{label}</label>
       </div>
-      <div className="col">
+      <div className="col col-sm-12">
         <output>{value}</output>
       </div>
     </div>

@@ -40,15 +40,7 @@ async function work(firebase) {
           "/order-intents/" + user + "/" + orderIntentKey
         );
 
-        if (!orderIntent.ravencoinAddress) {
-          continue;
-        }
-        console.log("Validate if", orderIntent.ravencoinAddress);
-        const validatePromise = rpc("validateaddress", [
-          orderIntent.ravencoinAddress,
-        ]);
-
-        validatePromise.then((d) => {
+        const updateOrder = (addressValidation) => {
           const toSave = {};
           //Cherry pick white-listed properties
           const whiteList = [
@@ -64,7 +56,7 @@ async function work(firebase) {
               toSave[prop] = value;
             }
           });
-          if (d.isvalid !== true) {
+          if (addressValidation && addressValidation.isvalid === false) {
             toSave["error"] = "Invalid Ravencoin address";
           }
           console.log("Updating order", orderIntentKey, "with", toSave);
@@ -73,7 +65,20 @@ async function work(firebase) {
 
           //Delete the intent
           intentRef.remove();
-        });
+        };
+
+        
+        if (orderIntent.ravencoinAddress) {
+          console.log("Validate if", orderIntent.ravencoinAddress);
+          const validatePromise = rpc("validateaddress", [
+            orderIntent.ravencoinAddress,
+          ]);
+          validatePromise.then(updateOrder);
+        } else {
+          //no address to validate
+          const addressValidation = null;
+          updateOrder(addressValidation);
+        }
       }
     }
   };

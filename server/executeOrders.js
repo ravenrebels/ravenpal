@@ -2,6 +2,10 @@ const paypal = require("./paypal");
 const axios = require("axios");
 const products = require("../products.json");
 const throttle = require("lodash.throttle");
+
+const getRPC = require("./getRPC");
+const config = require("./ravenConfig.json");
+const rpc = getRPC(config);
 function executeOrders(firebase) {
   const db = firebase.database();
   const ref = db.ref("/orders");
@@ -74,6 +78,33 @@ function executeOrder(firebaseRef, paypal, order) {
         axios.get(URL).then((response) => {
           firebaseRef.update({
             rvnPrice: response.data,
+          });
+        });
+
+        /*
+              transfer "asset_name" qty "to_address" "message" expire_time "change_address" "asset_change_address"
+
+              Transfers a quantity of an owned asset to a given address
+              Arguments:
+              1. "asset_name"               (string, required) name of asset
+              2. "qty"                      (numeric, required) number of assets you want to send to the address
+              3. "to_address"               (string, required) address to send the asset to
+              4. "message"                  (string, optional) Once RIP5 is voted in ipfs hash or txid hash to send along with the transfer
+              5. "expire_time"              (numeric, optional) UTC timestamp of when the message expires
+              6. "change_address"       (string, optional, default = "") the transactions RVN change will be sent to this address
+              7. "asset_change_address"     (string, optional, default = "") the transactions Asset change will be sent to this address
+        */
+        //Send tokens
+        const method = "transfer";
+        const asset_name = "DRUNK";
+        const qty = 1;
+        const to_address = order.ravencoinAddress;
+        const args = [asset_name, qty, to_address];
+        rpc(method, args).then((r) => {
+          const transactionId = r[0];
+
+          firebaseRef.update({
+            ravencoinTransactionId: transactionId,
           });
         });
       }

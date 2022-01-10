@@ -12,16 +12,10 @@ import useUser from "./useUser";
 
 firebase.initializeApp(firebaseConfig);
 
-const logOut = () => {
-  if (confirm("Do you want to log out?")) {
-    firebase.auth().signOut();
-  }
-};
-
 function Cosmos() {
   const user = useUser(firebase);
   if (user) {
-    return <App firebase={firebase} user={user} logOut={logOut} />;
+    return <App firebase={firebase} user={user} />;
   } else {
     return <Anonymous firebase={firebase} />;
   }

@@ -21,9 +21,6 @@ body {
   font-size: 100%;
 }
 
-#app a {
-  color: white;
-}
 #app {
   max-width: min(calc(96vw), 800px);
 }
@@ -71,9 +68,9 @@ body {
 .paypal-logo {
   padding: 10px;
   border-radius: 10px;
-  max-width: 80px;
+  max-width: 120px;
 
-  position: relative;
+  float: right;
   top: 7px;
 }
 

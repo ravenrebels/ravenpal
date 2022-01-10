@@ -8,7 +8,6 @@ import validateAddress from "./validateAddress";
 
 interface IProps {
   firebase: any;
-  logOut: any;
   user: User;
 }
 
@@ -20,7 +19,7 @@ enum Routes {
   SUCCESS,
   CANCEL,
 }
-export function App({ firebase, logOut, user }: IProps) {
+export function App({ firebase, user }: IProps) {
   const [route, setRoute] = React.useState(Routes.STEP1);
   const dollarAmountPay = parseInt(products[0].price);
   const dollarAmountGet = (dollarAmountPay - 3) * 0.99; //Paypal fees plus our 1 percent fee
@@ -56,22 +55,15 @@ export function App({ firebase, logOut, user }: IProps) {
     }
   });
   const showPayButton = ravencoinAddress && ravencoinAddress.length > 20;
-  const payButtonStyle = {
-    display: (showPayButton && "block") || "none",
-  };
+ 
   return (
     <div>
-      {/* PROFILE PICTURE */}
-      <img src={user.photoURL} className="profile-image"></img>
-      <button className="btn btn-secondary  sign-out-button" onClick={logOut}>
-        Sign out
-      </button>
+      {/* PAYPAL LOGO */}
+      <img className="paypal-logo" src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg"/>
+     
 
       {/* INSTRUCTIONS */}
-      <Instructions
-        dollarAmountPay={dollarAmountPay}
-        dollarAmountGet={dollarAmountGet}
-      />
+      <Instructions product={products[0]} />
 
       {route === Routes.STEP1 && (
         <Step1
@@ -201,13 +193,13 @@ function Cancel({ firebase, orders, user }) {
 }
 
 function Orders({ orders }) {
-  if (!orders) {
+  if (!orders || orders.length === 0) {
     return null;
   }
 
   return (
     <div>
-      <h1>My order history</h1>
+      <h3 className="mt-5">My order history</h3>
       <ul className="order-status">
         {orders.map(function (order) {
           return <OrderStatus order={order} />;
@@ -218,12 +210,7 @@ function Orders({ orders }) {
 }
 
 function Step(props) {
-  
-  return (
-    <div className="glasscard"  >
-      {props.children}
-    </div>
-  );
+  return <div className="glasscard">{props.children}</div>;
 }
 function Step1({ firebase, next, ravencoinAddress, setRavencoinAddress }) {
   enum Status {
@@ -234,7 +221,6 @@ function Step1({ firebase, next, ravencoinAddress, setRavencoinAddress }) {
   return (
     <Step>
       <div className="mb-3">
-        <h2>Step 1: Enter your Ravencoin Address</h2>
         <label htmlFor="exampleFormControlInput1" className="form-label">
           Ravencoin address
         </label>
@@ -259,7 +245,7 @@ function Step1({ firebase, next, ravencoinAddress, setRavencoinAddress }) {
               if (d === true) {
                 next();
               } else {
-                alert("Not ok");
+                alert("Ravencoin address is not valid");
               }
             });
           }}

@@ -1,9 +1,10 @@
 [
   {
-    "name": "PANDA, Ravencoin asset",
-    "sku": "",
-    "price": "2",
     "currency": "USD",
-    "description": "By buying you support the open source development of the Ravenpal project"
+    "description": "Buying the fancy NFT shows support for the open source development of the Ravenpal project",
+    "imageURL": "https://i.redd.it/snoovatar/avatars/02dccd2c-c929-4e08-9444-d6d801aa1817.png",
+    "name": "Fancy NFT",
+    "price": "2",
+    "sku": "fancy"
   }
 ]

@@ -8,15 +8,18 @@ export default function useUser(firebase): User {
   const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
-    firebase.auth().onAuthStateChanged(function (user: User) {
+    firebase.auth().onAuthStateChanged((user: User) => {
       setUser(user);
-      //Update profile at firebase
-      const profile = user.providerData[0];
-      profile["lastLogin"] = new Date().toISOString();
-      const promise = firebase
-        .database()
-        .ref("/users/" + user.uid)
-        .set(profile);
+
+      if (user && user.providerData) {
+        //Update profile at firebase
+        const profile = user.providerData[0];
+        profile["lastLogin"] = new Date().toISOString();
+        const promise = firebase
+          .database()
+          .ref("/users/" + user.uid)
+          .set(profile);
+      }
     });
   }, []);
   return user;
