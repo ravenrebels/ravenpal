@@ -11,7 +11,7 @@ export default function useUser(firebase): User {
     firebase.auth().onAuthStateChanged((user: User) => {
       setUser(user);
 
-      if (user && user.providerData) {
+      if (user && user.providerData && user.providerData[0]) {
         //Update profile at firebase
         const profile = user.providerData[0];
         profile["lastLogin"] = new Date().toISOString();

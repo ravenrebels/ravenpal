@@ -17,6 +17,7 @@ export function OrderStatus({ order }) {
   let fees = null;
   let headline = order.id;
   let id = null;
+  let name = null;
   let pay = null;
   let rvnPrice = null;
   let ravencoinTransactionId = null;
@@ -53,17 +54,15 @@ export function OrderStatus({ order }) {
         }
       />
     );
-    amount = (
-      <LabeledOutputField
-        label="Currency"
-        value={order.payment.transactions[0].amount.currency}
-      />
-    );
 
     currency = (
       <LabeledOutputField
         label="Total"
-        value={order.payment.transactions[0].amount.total}
+        value={
+          order.payment.transactions[0].amount.total +
+          " " +
+          order.payment.transactions[0].amount.currency
+        }
       />
     );
     description = (
@@ -72,6 +71,16 @@ export function OrderStatus({ order }) {
         value={order.payment.transactions[0].description}
       />
     );
+
+    try {
+      console.log("item", order.payment.transactions[0].item_list.items[0]);
+      name = (
+        <LabeledOutputField
+          label="Name"
+          value={order.payment.transactions[0].item_list.items[0].name}
+        />
+      );
+    } catch (e) {}
 
     if (order.payment.transactions && order.payment.transactions[0]) {
       const transaction = order.payment.transactions[0];
@@ -118,9 +127,11 @@ export function OrderStatus({ order }) {
   return (
     <li className="order-status" key={order.id}>
       <div className="glasscard">
-        <h5 class="card-title">{headline}</h5>
+        <h5 className="card-title">{headline}</h5>
 
         {id}
+        {name}
+
         {err}
         {order.ravencoinAddress && (
           <LabeledOutputField
