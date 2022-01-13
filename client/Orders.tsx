@@ -18,8 +18,20 @@ export function Orders({ orders }) {
   if (!orders) {
     return null;
   }
-  const ordersArray = ordersByDate(orders);
+  let ordersArray = ordersByDate(orders);
 
+  ordersArray = ordersArray.filter((order) => {
+    console.log("order", order);
+    try {
+      return order.payment.state === "approved";
+    } catch (e) {
+      return false;
+    }
+  });
+
+  if(ordersArray.length === 0){
+    return null;
+  }
   function ordersByDate(orders) {
     let ordersArray = [];
     if (orders) {

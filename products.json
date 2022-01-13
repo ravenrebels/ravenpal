@@ -1,10 +1,11 @@
 [
   {
     "currency": "USD",
-    "description": "Buying the fancy NFT shows support for the open source development of the Ravenpal project",
-    "imageURL": "https://i.redd.it/snoovatar/avatars/02dccd2c-c929-4e08-9444-d6d801aa1817.png",
-    "name": "Fancy NFT",
-    "price": "2",
-    "sku": "fancy"
+    "description": "Buy this token and you help the community to beta test selling Ravencoin digital assets via Paypal",
+    "imageURL": "https://gateway.ipfs.io/ipfs/QmW7n2iAsdnnwj2xw1zZxzHeYduv34j7jttaJUbULpQEfW",
+    "name": "Support project Ravenpal token",
+    "price": "3.50",
+    "sku": "fancy",
+    "assetName": "RAVENREBELS/RAVENPAL"
   }
 ]

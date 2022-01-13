@@ -61,7 +61,7 @@ function createPayment(firebaseOrderRef, ravencoinAddress) {
     },
     flow_config: {
       landing_page_type: "billing",
-      bank_txn_pending_url: "http://www.yeowza.com",
+      bank_txn_pending_url: "https://www.ravenrebels.com",
     },
   };
   paypal.webProfile.create(

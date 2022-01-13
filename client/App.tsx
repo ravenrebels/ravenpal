@@ -8,7 +8,7 @@ import { Orders } from "./Orders";
 import { Cancel } from "./Cancel";
 
 export interface IOrder {
-  id: string;
+  key: string;
   redirectURL: string;
 }
 interface IProps {
@@ -43,9 +43,7 @@ export function App({ firebase, user }: IProps) {
   }, []);
 
   if (window.location.href.indexOf("cancel=true&token=") > -1) {
-    return (
-      <Cancel firebase={firebase} ordersTemp={orders} user={user}></Cancel>
-    );
+    return <Cancel firebase={firebase} orders={orders} user={user}></Cancel>;
   }
   /*
   //Does any order have state "created"?

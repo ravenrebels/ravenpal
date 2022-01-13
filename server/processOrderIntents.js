@@ -47,7 +47,7 @@ async function work(firebase) {
             "metadata",
             "ravencoinAddress",
             "userTime",
-            "canceledByUser",
+            "cancelledByUser",
           ];
 
           whiteList.map(function (prop) {

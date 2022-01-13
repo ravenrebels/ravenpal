@@ -105,15 +105,15 @@ export function OrderStatus({ order }) {
     if (order.payment.state === "approved") {
       stateTemp = "Order is paid";
     }
-    if (order.canceledByUser) {
-      stateTemp = "CANCELED";
+    if (order.cancelledByUser) {
+      stateTemp = "CANCELLED";
     }
     state = <LabeledOutputField label="State/Status" value={stateTemp} />;
 
     headline = new Date(order.payment.create_time).toLocaleString();
 
-    if (order.canceledByUser === true) {
-      pay = <h2>You have canceled this order</h2>;
+    if (order.cancelledByUser === true) {
+      pay = <h2>You have cancelled this order</h2>;
     } else if (order.payment.state === "created") {
       pay = (
         <div>

@@ -75,8 +75,8 @@ function Success() {
             //Redirect the user back after 1 seconds
             setTimeout(() => {
               console.info("Should redirect to start page");
-              window.location.href = "index.html";
-            }, 1000);
+              window.location.href = "/";
+            }, 2000);
           });
         }
       }

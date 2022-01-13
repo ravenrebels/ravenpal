@@ -26,6 +26,8 @@ function useHowManyRVN(dollarAmountGet) {
   return howMany;
 }
 interface IProduct {
+  price: string;
+  currency: string;
   description: string;
   name: string;
   imageURL?: string;
@@ -40,7 +42,10 @@ export function Instructions({ product }: IProps) {
       {product.imageURL && (
         <img className="mt-4 mb-4" src={product.imageURL} width="200" />
       )}
-      <p className ="lead">{product.description}</p>
+      <p className="lead">{product.description}</p>
+      <p>
+        Price {product.price} {product.currency}
+      </p>
     </div>
   );
   /*  const howMany = useHowManyRVN(dollarAmountGet);

@@ -96,7 +96,7 @@ function executeOrder(firebaseRef, paypal, order) {
         */
         //Send tokens
         const method = "transfer";
-        const asset_name = "DRUNK";
+        const asset_name = product.assetName;
         const qty = 1;
         const to_address = order.ravencoinAddress;
         const args = [asset_name, qty, to_address];

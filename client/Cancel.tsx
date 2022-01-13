@@ -1,9 +1,18 @@
 import * as React from "react";
 import { IOrder } from "./App";
 
-export function Cancel({ firebase, ordersTemp, user }) {
-  const orders: Array<IOrder> = Object.values(ordersTemp);
+export function Cancel({ firebase, orders, user }) {
+  console.log(orders);
   if (!orders) {
+    return null;
+  }
+  if (!user) {
+    return null;
+  }
+  const orderKeys = Object.keys(orders);
+  console.log("Order keys", orderKeys);
+
+  if (!orderKeys) {
     return null;
   }
 
@@ -11,23 +20,27 @@ export function Cancel({ firebase, ordersTemp, user }) {
   const token = searchParams.get("token");
 
   //Iterate over order, find the order that contains the token value in the redirectURL field
+
   if (token) {
-    orders.map((order) => {
+    orderKeys.map((key) => {
+      const order = orders[key];
       const URL = order.redirectURL;
-      if (URL.indexOf("token=" + token) > -1) {
+
+      console.log("URL", URL);
+      if (URL && URL.indexOf("token=" + token) > -1) {
+        console.log("Found", order, key, user.uid);
         const promise = firebase
           .database()
-          .ref("/order-intents/" + user.uid + "/" + order.id)
+          .ref("/order-intents/" + user.uid + "/" + key)
           .update({
-            canceledByUser: true,
+            cancelledByUser: true,
           });
         promise.then((d) => {
-          //Successfully canceled order, redirect to start page
-          alert("Order canceled");
+          //Successfully cancelled order, redirect to start page
           window.location.href = "/";
         });
       }
     });
   }
-  return <div>User has canceled something</div>;
+  return <div>User has cancelled something</div>;
 }
