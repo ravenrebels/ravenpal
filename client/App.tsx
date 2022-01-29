@@ -55,12 +55,6 @@ export function App({ firebase, user }: IProps) {
 */
   return (
     <div>
-      {/* PAYPAL LOGO */}
-      <img
-        className="paypal-logo"
-        src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg"
-      />
-
       {/* INSTRUCTIONS */}
       <Instructions product={products[0]} />
 

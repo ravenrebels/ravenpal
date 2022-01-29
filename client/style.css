@@ -1,10 +1,38 @@
 /* Bootstrap variables */
-
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+* {
+  box-sizing: border-box;
+}
 body {
+  background-repeat: no-repeat;
+  background-size: auto;
+  background-color: #000;
+  background-image: linear-gradient(147deg, #923cb5 0%, #000000 74%);
+  color: #fff;
   --bs-body-font-size: 18px;
   background-color: #f2f2ed;
-}
+  font-family: "Quicksand", sans-serif;
 
+  min-height: calc(100vh);
+}
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 300;
+}
 .order-status {
   list-style: none;
   margin: 0;
@@ -22,12 +50,19 @@ body {
 }
 
 #app {
-  max-width: min(calc(96vw), 800px);
+  max-width: min(calc(90vw), 500px);
 }
 
 @media screen and (min-width: 600px) {
   #app {
     border-radius: 10px;
+  }
+  .instructions__list li {
+    margin-bottom: 20px;
+  }
+
+  .paypal-logo {
+    max-width: 120px;
   }
 }
 
@@ -57,18 +92,17 @@ body {
   margin-bottom: 50px;
 }
 
-.instructions__list li {
-  margin-bottom: 20px;
-}
-
 .profile-image {
   border-radius: 20px;
 }
 
+.product-image {
+  border-radius: 10px;
+}
 .paypal-logo {
   padding: 10px;
-  border-radius: 10px;
-  max-width: 120px;
+  border-radius: 20px;
+  max-width: 80px;
 
   float: right;
   top: 7px;
@@ -79,4 +113,8 @@ body {
   padding-bottom: 50px;
 
   position: relative;
+}
+
+ul.instructions__list a {
+  color: white;
 }

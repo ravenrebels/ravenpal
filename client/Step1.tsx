@@ -50,7 +50,7 @@ export function Step1({
     <Step>
       <div className="mb-3">
         <label htmlFor="exampleFormControlInput1" className="form-label">
-          Ravencoin address
+          Ravencoin address (<small>asset aware</small>)
         </label>
         <input
           className="form-control"

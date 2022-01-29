@@ -38,14 +38,18 @@ interface IProps {
 export function Instructions({ product }: IProps) {
   return (
     <div>
-      <h1>{product.name}</h1>
-      {product.imageURL && (
-        <img className="mt-4 mb-4" src={product.imageURL} width="200" />
-      )}
+      <h1 className="mt-4 mb-5">Project Ravenpal</h1>
       <p className="lead">{product.description}</p>
       <p>
         Price {product.price} {product.currency}
-      </p>
+      </p>{" "}
+      {product.imageURL && (
+        <img
+          className="mt-4 mb-4 product-image"
+          src={product.imageURL}
+          width="200"
+        />
+      )}
     </div>
   );
   /*  const howMany = useHowManyRVN(dollarAmountGet);
