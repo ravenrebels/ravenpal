@@ -94,19 +94,30 @@ function executeOrder(firebaseRef, paypal, order) {
               6. "change_address"       (string, optional, default = "") the transactions RVN change will be sent to this address
               7. "asset_change_address"     (string, optional, default = "") the transactions Asset change will be sent to this address
         */
-        //Send tokens
-        const method = "transfer";
-        const asset_name = product.assetName;
-        const qty = 1;
-        const to_address = order.ravencoinAddress;
-        const args = [asset_name, qty, to_address];
-        rpc(method, args).then((r) => {
-          const transactionId = r[0];
 
-          firebaseRef.update({
-            ravencoinTransactionId: transactionId,
+        {
+          //Send tokens
+          const method = "transfer";
+          const asset_name = product.assetName;
+          const qty = 1;
+          const to_address = order.ravencoinAddress;
+          const args = [asset_name, qty, to_address];
+          rpc(method, args).then((r) => {
+            const transactionId = r[0];
+
+            firebaseRef.update({
+              ravencoinTransactionId: transactionId,
+            });
           });
-        });
+        }
+
+        //SEND RAVENCOIN
+        {
+          const qty = 10;
+          const to_address = order.ravencoinAddress;
+          const args = [to_address, qty];
+          rpc("sendtoaddress", args);
+        }
       }
     }
   );
