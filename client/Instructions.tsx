@@ -31,38 +31,50 @@ interface IProduct {
   description: string;
   name: string;
   imageURL?: string;
+  fee: number;
 }
 interface IProps {
   product: IProduct;
 }
-export function Instructions({ product }: IProps) {
-  return (
-    <div>
-      <h1 className="mt-4 mb-5">Project Ravenpal</h1>
-      <p className="lead">{product.description}</p>
-      <p>
-        Price {product.price} {product.currency}
-      </p>{" "}
-      {product.imageURL && (
+/*
+ {product.imageURL && (
         <img
           className="mt-4 mb-4 product-image"
           src={product.imageURL}
           width="200"
         />
       )}
+      */
+export default function Instructions({ product }: IProps) {
+  const p = parseFloat(product.price);
+  const howMany = useHowManyRVN(p * (1 - product.fee));
+
+  return (
+    <div>
+      <p className="lead">{product.description}</p>
+      <p className="lead">
+        For {product.price} {product.currency} you get
+        <ul>
+          <li>
+            around {howMany} RVN{" "}
+            <small style={{ fontSize: "75%" }}>
+              (fees {product.fee * 100}%)
+            </small>
+          </li>
+          <li>a Ravenpal supporter token</li>
+        </ul>
+      </p>
     </div>
   );
   /*  const howMany = useHowManyRVN(dollarAmountGet);
-  return (
+  return ( 
     <div>
       <h1>Buy some RVN</h1>
       <p>
         Buy approximately {howMany} RVN for <em>${dollarAmountPay}</em> so you
         can start doing stuff on Ravencoin blockchain.
       </p>
-      <p>No more, no less.</p>
-
-    
+      <p>No more, no less.</p> 
     </div>
   );*/
 }

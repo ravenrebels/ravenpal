@@ -72,17 +72,21 @@ function Success() {
           const promise = orderIntentRef.update(toSend);
 
           promise.then(() => {
-            //Redirect the user back after 1 seconds
+            //Redirect the user back after 2 seconds
             setTimeout(() => {
               console.info("Should redirect to start page");
-              window.location.href = "/";
+              window.location.href = "/#my-order-history";
             }, 2000);
           });
         }
       }
     });
   }
-  return <div>Success......</div>;
+  return (
+    <div>
+      <h1>Success......</h1>
+    </div>
+  );
 }
 
 function useUser(): User {

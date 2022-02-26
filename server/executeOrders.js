@@ -6,6 +6,15 @@ const throttle = require("lodash.throttle");
 const getRPC = require("./getRPC");
 const config = require("./ravenConfig.json");
 const rpc = getRPC(config);
+
+const getQuantityToSend = require("./getQuantityToSend");
+
+/*
+ Execute order, is the last step.
+ The customer has accepted the payment over at Paypal.
+ We are ready to so, "hit it".
+
+*/
 function executeOrders(firebase) {
   const db = firebase.database();
   const ref = db.ref("/orders");
@@ -25,7 +34,6 @@ function executeOrders(firebase) {
         const order = orders[orderKey];
 
         if (shouldExecuteOrder(order) === true) {
-          console.log("Execute order, should process", order);
           const firebaseRef = db.ref("/orders/" + userId + "/" + orderKey);
           executeOrder(firebaseRef, paypal, order);
         }
@@ -54,73 +62,67 @@ function executeOrder(firebaseRef, paypal, order) {
     ],*/
   };
 
-  paypal.payment.execute(
-    paymentId,
+  const callback = async function (error, payment) {
+    if (error) {
+      console.log("Error processing payment id", paymentId, error);
+      firebaseRef.update({
+        error: error,
+      });
+    } else {
+      firebaseRef.update({
+        payment: payment,
+      });
 
-    execute_payment_json,
-    function (error, payment) {
-      if (error) {
-        console.log("Error processing payment id", paymentId, error);
+      console.log(JSON.stringify(payment));
+
+      /*
+            transfer "asset_name" qty "to_address" "message" expire_time "change_address" "asset_change_address"
+
+            Transfers a quantity of an owned asset to a given address
+            Arguments:
+            1. "asset_name"               (string, required) name of asset
+            2. "qty"                      (numeric, required) number of assets you want to send to the address
+            3. "to_address"               (string, required) address to send the asset to
+            4. "message"                  (string, optional) Once RIP5 is voted in ipfs hash or txid hash to send along with the transfer
+            5. "expire_time"              (numeric, optional) UTC timestamp of when the message expires
+            6. "change_address"       (string, optional, default = "") the transactions RVN change will be sent to this address
+            7. "asset_change_address"     (string, optional, default = "") the transactions Asset change will be sent to this address
+      */
+
+      console.log("Payment", payment);
+      //Fetch current RVN price from Binance
+      const URL = "https://api1.binance.com/api/v3/ticker/price?symbol=RVNUSDT";
+
+      const response = await axios.get(URL);
+      const rvnPrice = response.data;
+
+      //Quantity is product.price / price of RVN minus product.fees
+      //SEND RAVENCOIN
+      {
+        const qty = getQuantityToSend(product, parseFloat(rvnPrice.price));
+        console.log("Will send", qty, "RVN to", order.ravencoinAddress);
+        const to_address = order.ravencoinAddress;
+        const args = [to_address, qty];
+        const ravencoinTransactionId = await rpc("sendtoaddress", args);
         firebaseRef.update({
-          error: error,
+          rvnQuantity: qty,
+          rvnPrice,
+          ravencoinTransactionId,
         });
-      } else {
-        firebaseRef.update({
-          payment: payment,
-        });
-        const json = JSON.stringify(payment, null, 4);
-        console.log(JSON.stringify(payment));
+      }
 
-        //Fetch current RVN price from Binance
-
-        const URL =
-          "https://api1.binance.com/api/v3/ticker/price?symbol=RVNUSDT";
-        axios.get(URL).then((response) => {
-          firebaseRef.update({
-            rvnPrice: response.data,
-          });
-        });
-
-        /*
-              transfer "asset_name" qty "to_address" "message" expire_time "change_address" "asset_change_address"
-
-              Transfers a quantity of an owned asset to a given address
-              Arguments:
-              1. "asset_name"               (string, required) name of asset
-              2. "qty"                      (numeric, required) number of assets you want to send to the address
-              3. "to_address"               (string, required) address to send the asset to
-              4. "message"                  (string, optional) Once RIP5 is voted in ipfs hash or txid hash to send along with the transfer
-              5. "expire_time"              (numeric, optional) UTC timestamp of when the message expires
-              6. "change_address"       (string, optional, default = "") the transactions RVN change will be sent to this address
-              7. "asset_change_address"     (string, optional, default = "") the transactions Asset change will be sent to this address
-        */
-
-        {
-          //Send tokens
-          const method = "transfer";
-          const asset_name = product.assetName;
-          const qty = 1;
-          const to_address = order.ravencoinAddress;
-          const args = [asset_name, qty, to_address];
-          rpc(method, args).then((r) => {
-            const transactionId = r[0];
-
-            firebaseRef.update({
-              ravencoinTransactionId: transactionId,
-            });
-          });
-        }
-
-        //SEND RAVENCOIN
-        {
-          const qty = 10;
-          const to_address = order.ravencoinAddress;
-          const args = [to_address, qty];
-          rpc("sendtoaddress", args);
-        }
+      {
+        //Send tokens
+        const method = "transfer";
+        const asset_name = product.assetName;
+        const qty = 1;
+        const to_address = order.ravencoinAddress;
+        const args = [asset_name, qty, to_address];
+        rpc(method, args);
       }
     }
-  );
+  };
+  paypal.payment.execute(paymentId, execute_payment_json, callback);
 }
 
 function shouldExecuteOrder(order) {

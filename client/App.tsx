@@ -1,11 +1,13 @@
 import * as React from "react";
-import { Instructions } from "./Instructions";
+import Instructions from "./Instructions";
 import { User } from "@firebase/auth-types";
 import * as products from "../products.json";
 
 import { Step1 } from "./Step1";
 import { Orders } from "./Orders";
 import { Cancel } from "./Cancel";
+import { Header } from "./Header";
+import Footer from "./Footer";
 
 export interface IOrder {
   key: string;
@@ -42,6 +44,16 @@ export function App({ firebase, user }: IProps) {
     return cleanup;
   }, []);
 
+  //Hack to get browser to scroll down to #my-order-history
+  React.useEffect(() => {
+    if (window.location.href.indexOf("#my-order-history") > -1) {
+      //      document.getElementById("my-order-history").focus();
+      setTimeout(() => {
+        window.location.href = window.location.href;
+      }, 1000);
+    }
+  }, []);
+
   if (window.location.href.indexOf("cancel=true&token=") > -1) {
     return <Cancel firebase={firebase} orders={orders} user={user}></Cancel>;
   }
@@ -56,6 +68,7 @@ export function App({ firebase, user }: IProps) {
   return (
     <div>
       {/* INSTRUCTIONS */}
+      <Header product={products[0]} />
       <Instructions product={products[0]} />
 
       {route === Routes.STEP1 && (
@@ -70,7 +83,9 @@ export function App({ firebase, user }: IProps) {
       {route === Routes.STEP2 && <Step2 />}
 
       {/* LIST OF ORDERS */}
+      <div id="my-order-history"></div>
       <Orders orders={orders} />
+      <Footer />
     </div>
   );
 }

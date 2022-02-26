@@ -1,5 +1,4 @@
-import * as React from "react";
-import { IOrder } from "./App";
+import * as React from "react"; 
 
 export function Cancel({ firebase, orders, user }) {
   console.log(orders);

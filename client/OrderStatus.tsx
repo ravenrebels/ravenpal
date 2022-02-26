@@ -22,7 +22,7 @@ export function OrderStatus({ order }) {
   let rvnPrice = null;
   let ravencoinTransactionId = null;
   let state = null;
-
+  let rvnQuantity = null;
   if (order.error) {
     err = (
       <LabeledOutputField label="Error" value={JSON.stringify(order.error)} />
@@ -37,16 +37,29 @@ export function OrderStatus({ order }) {
       />
     );
   }
+
+  if (order.rvnQuantity) {
+    rvnQuantity = (
+      <LabeledOutputField label="Amount of RVN" value={order.rvnQuantity} />
+    );
+  }
   if (order.payment.transactions) {
     ravencoinTransactionId = (
       <LabeledOutputField
         label="Ravencoin transaction id"
+        id={order.payment.id}
+        style={{
+          overflow: "hidden",
+          maxWidth: "100%",
+          textOverflow: "ellipsis",
+        }}
         value={
           <a
             href={
               "https://rvn.cryptoscope.io/tx/?txid=" +
               order.ravencoinTransactionId
             }
+            className="text-light "
             target="_blank"
           >
             {order.ravencoinTransactionId}
@@ -73,7 +86,6 @@ export function OrderStatus({ order }) {
     );
 
     try {
-      console.log("item", order.payment.transactions[0].item_list.items[0]);
       name = (
         <LabeledOutputField
           label="Name"
@@ -82,6 +94,7 @@ export function OrderStatus({ order }) {
       );
     } catch (e) {}
 
+    /*
     if (order.payment.transactions && order.payment.transactions[0]) {
       const transaction = order.payment.transactions[0];
 
@@ -99,7 +112,7 @@ export function OrderStatus({ order }) {
           />
         );
       }
-    }
+    }*/
     id = <LabeledOutputField label={"id"} value={order.payment.id} />;
     let stateTemp = "Order created by you";
     if (order.payment.state === "approved") {
@@ -128,38 +141,39 @@ export function OrderStatus({ order }) {
     <li className="order-status" key={order.id}>
       <div className="glasscard">
         <h5 className="card-title">{headline}</h5>
-
-        {id}
-        {name}
+        {ravencoinTransactionId}
 
         {err}
-        {order.ravencoinAddress && (
-          <LabeledOutputField
-            label="Ravencoin address"
-            value={order.ravencoinAddress}
-          ></LabeledOutputField>
-        )}
-        {rvnPrice}
-        {fees}
+
+        {rvnQuantity}
+
         {state}
         {currency}
         {amount}
         {description}
-        {ravencoinTransactionId}
+        {id}
         {pay}
       </div>
     </li>
   );
 }
 
-function LabeledOutputField({ label, value }) {
+interface IProps {
+  id?: any;
+  style?: any;
+  label: string;
+  value: any;
+}
+function LabeledOutputField({ id, style, label, value }: IProps) {
   return (
     <div className="row order-status mt-4">
       <div className="col col-sm-12">
-        <label className="order-status__label">{label}</label>
+        <label id={id} className="order-status__label">
+          {label}
+        </label>
       </div>
       <div className="col col-sm-12">
-        <output>{value}</output>
+        <output style={style}>{value}</output>
       </div>
     </div>
   );

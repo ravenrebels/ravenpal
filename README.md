@@ -11,8 +11,7 @@ Sell Ravencoin (RVN) using Paypal
 
 Flow
 
-- User visits web application
-- User sign in using Google
+- User visits web application 
 - User specify her Ravencoin address
 - Server validates Ravencoin address
 

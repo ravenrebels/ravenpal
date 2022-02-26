@@ -1,36 +1,38 @@
 import React from "react";
 import * as products from "../products.json";
-
-const product = products[0];
-export default function Anonymous({ firebase }) {
-  return (
-    <div>
-      <h1 className=" mt-4 mb-5">Project Ravenpal</h1>
-
-      <p className="lead">
-        Buy this token for ${product.price} and you help the community to beta
-        test selling Ravencoin digital assets via Paypal
-      </p>
-      <img
+import Footer from "./Footer";
+import { Header } from "./Header";
+import Instructions from "./Instructions";
+/*
+  <img
         className="mt-4 mb-4 product-image"
         src={product.imageURL}
         width="200"
       />
+      */
+const product = products[0];
+
+export default function Anonymous({ firebase }) {
+  return (
+    <div>
+      <Header product={product} />
+      <Instructions product={product} />
+
       <div>
-        <small>
-          <strong>What you need</strong>
+        <h2 className="h5">What you need</h2>
+        <p>
           <ul className="instructions__list">
+            <li>A Paypal account or credit card</li>
             <li>
-              An asset aware Ravencon wallet (address).
+              An asset aware Ravencoin wallet (address).
               <br />
               <a href="https://mangofarmassets.com/" target="-blank">
                 Mango Farms
               </a>{" "}
-              offers a web wallet, great way to get started
+              web wallet is a great way to get started
             </li>
-            <li>A Paypal account or credit card</li>
           </ul>
-        </small>
+        </p>
       </div>
       <button
         className="btn btn-primary"
@@ -40,6 +42,7 @@ export default function Anonymous({ firebase }) {
       >
         Get started
       </button>
+      <Footer />
     </div>
   );
 }

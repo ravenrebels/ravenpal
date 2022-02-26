@@ -62,24 +62,33 @@ export function Step1({
           type="text"
           value={ravencoinAddress || ""}
         />
+        <div>
+          <button
+            className="btn btn-secondary me-4 mt-4"
+            onClick={() => {
+              firebase.auth().signOut();
+            }}
+          >
+            Back
+          </button>
+          <button
+            className="btn btn-primary mt-4"
+            onClick={async () => {
+              setStatus(Status.VALIDATING);
+              const promise = validateAddress(firebase, ravencoinAddress);
 
-        <button
-          className="btn btn-primary mt-4"
-          onClick={async () => {
-            setStatus(Status.VALIDATING);
-            const promise = validateAddress(firebase, ravencoinAddress);
-
-            promise.then((d) => {
-              if (d === true) {
-                next();
-              } else {
-                alert("Ravencoin address is not valid");
-              }
-            });
-          }}
-        >
-          Next
-        </button>
+              promise.then((d) => {
+                if (d === true) {
+                  next();
+                } else {
+                  alert("Ravencoin address is not valid");
+                }
+              });
+            }}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </Step>
   );

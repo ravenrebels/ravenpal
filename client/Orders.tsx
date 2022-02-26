@@ -50,7 +50,7 @@ export function Orders({ orders }) {
 
   return (
     <div>
-      <h3 className="mt-5">My order history</h3>
+      <h3 className="mt-5" >My order history</h3>
       <ul className="order-status">
         {ordersArray.map(function (order) {
           return <OrderStatus order={order} />;

@@ -5,13 +5,23 @@ const processOrders = require("./processOrders");
 const executeOrders = require("./executeOrders");
 const getRPC = require("./getRPC");
 const config = require("./ravenConfig.json");
+const firebaseConfig = require("../firebaseConfig.json");
+
 //SETUP FIREBASE
 const serviceAccount = require("./firebaseServiceAccount.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL:
-    "https://ravencoin--staging-default-rtdb.europe-west1.firebasedatabase.app",
+  databaseURL: firebaseConfig.databaseURL
 });
+
+function setTerminalTitle(title) {
+  process.stdout.write(
+    String.fromCharCode(27) + "]0;" + title + String.fromCharCode(7)
+  );
+}
+
+//Set title for the process
+setTerminalTitle("Paypal");
 
 //User generated order-intents should be moved to /orders
 processOrderIntents(admin);
@@ -19,7 +29,7 @@ processOrderIntents(admin);
 //Process the orders, users do not have write access to orders
 processOrders(admin);
 
-//Execute orders in state "created", where the endn user has accepted them
+//Execute orders in state "created", where the end user has accepted them
 
 executeOrders(admin);
 
