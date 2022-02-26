@@ -12,18 +12,16 @@ export function submitBuyOrder(firebase, user, ravencoinAddress) {
   });
   return orderRef;
 }
-
+enum Status {
+  NORMAL,
+  VALIDATING,
+}
 export function Step1({
   firebase,
   user,
   ravencoinAddress,
   setRavencoinAddress,
 }) {
-  enum Status {
-    NORMAL,
-    VALIDATING,
-  }
-
   const next = () => {
     //Subscribe to changes in Firebase, unregister on getting redirect URL
     const orderIntentRef = submitBuyOrder(firebase, user, ravencoinAddress);
@@ -46,6 +44,22 @@ export function Step1({
     });
   };
   const [status, setStatus] = React.useState(Status.NORMAL);
+
+  if (status === Status.VALIDATING) {
+    return (
+      <div>Validating address
+      <div className="progress">
+        <div
+          className="progress-bar progress-bar-striped progress-bar-animated"
+          role="progressbar"
+          aria-valuenow="100"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          style={{ width: "75%" }}
+        ></div>
+      </div></div>
+    );
+  }
   return (
     <Step>
       <div className="mb-3">
@@ -81,6 +95,7 @@ export function Step1({
                 if (d === true) {
                   next();
                 } else {
+                  setStatus(Status.NORMAL);
                   alert("Ravencoin address is not valid");
                 }
               });
