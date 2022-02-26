@@ -99,7 +99,7 @@ function executeOrder(firebaseRef, paypal, order) {
       //Quantity is product.price / price of RVN minus product.fees
       //SEND RAVENCOIN
       {
-        const qty = getQuantityToSend(product, parseFloat(rvnPrice.price));
+        const qty = getQuantityToSend(product, payment, parseFloat(rvnPrice.price));
         console.log("Will send", qty, "RVN to", order.ravencoinAddress);
         const to_address = order.ravencoinAddress;
         const args = [to_address, qty];
