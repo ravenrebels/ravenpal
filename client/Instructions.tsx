@@ -58,7 +58,7 @@ export default function Instructions({ product }: IProps) {
           <li>
             around {howMany} RVN{" "}
             <small style={{ fontSize: "75%" }}>
-              (fees {product.fee * 100}%)
+              (fees { (product.fee * 100).toFixed(2) }%)
             </small>
           </li>
           <li>a Ravenpal supporter token</li>
